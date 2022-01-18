@@ -16,21 +16,20 @@ sessionInfo()
 
 ## Q1. Git/GitHub
 
-**No handwritten homework reports are accepted for this course.** We work with Git and GitHub. Efficient and abundant use of Git, e.g., frequent and well-documented commits, is an important criterion for grading your homework.
-
-1. Apply for the [Student Developer Pack](https://education.github.com/pack) at GitHub using your UCLA email. You'll get GitHub Pro account for free (unlimited public and private repositories).
-
-2. Create a **private** repository `biostat-203b-2022-winter` and add `Hua-Zhou` and `maschepps` as your collaborators with write permission.
-
-3. Top directories of the repository should be `hw1`, `hw2`, ... Maintain two branches `main` and `develop`. The `develop` branch will be your main playground, the place where you develop solution (code) to homework problems and write up report. The `main` branch will be your presentation area. Submit your homework files (R markdown file `Rmd`, `html` file converted from R markdown, all code and extra data sets to reproduce results) in `main` branch.
-
-4. After each homework due date, teaching assistant and instructor will check out your main branch for grading. Tag each of your homework submissions with tag names `hw1`, `hw2`, ... Tagging time will be used as your submission time. That means if you tag your `hw1` submission after deadline, penalty points will be deducted for late submission.
-
-5. After this course, you can make this repository public and use it to demonstrate your skill sets on job market.
+Please refer to my GitHub private repo [biostat-203b-2022-winter](https://github.com/yuyuan-lin/biostat-203b-2022-winter) for the use of `git`.
 
 ## Q2. Data ethics training
 
-This exercise (and later in this course) uses the [MIMIC-IV data](https://mimic-iv.mit.edu), a freely accessible critical care database developed by the MIT Lab for Computational Physiology. Follow the instructions at <https://mimic.mit.edu/docs/gettingstarted/> to (1) complete the CITI `Data or Specimens Only Research` course and (2) obtain the PhysioNet credential for using the MIMIC-IV data. Display the verification links to your completion report and completion certificate here. (Hint: The CITI training takes a couple hours and the PhysioNet credentialing takes a couple days; do not leave it to the last minute.)
+**My verification links**
+
+[Completion Report](https://www.citiprogram.org/verify/?k78527830-9ab5-4fc8-a11f-628b252e0f4b-46576479)
+
+[Completion Certificate](https://www.citiprogram.org/verify/?w927396e3-b866-4ccd-a131-82b37ead8898-46576479)
+
+If the above links do not work, please copy and paste the following links into your browser:
+
+1. https://www.citiprogram.org/verify/?k78527830-9ab5-4fc8-a11f-628b252e0f4b-46576479
+2. https://www.citiprogram.org/verify/?w927396e3-b866-4ccd-a131-82b37ead8898-46576479
 
 ## Q3. Linux Shell Commands
 
