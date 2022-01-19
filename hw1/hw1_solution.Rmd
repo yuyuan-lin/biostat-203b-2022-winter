@@ -37,7 +37,6 @@ If the above links do not work, please copy and paste the following links into y
     ```{bash}
     ls -l /mnt/mimiciv/1.0
     ```
-Please, do **not** put these data files into Git; they are big. Do **not** copy them into your directory. Do **not** decompress the gz data files. These create unnecessary big files on storage and are not big data friendly practices. Just read from the data folder `/mnt/mimiciv/1.0` directly in following exercises. 
 
     Use Bash commands to answer following questions.
 
@@ -47,8 +46,26 @@ Please, do **not** put these data files into Git; they are big. Do **not** copy 
 ls -l /mnt/mimiciv/1.0/core
 ```
 
+```{bash}
+ls -l /mnt/mimiciv/1.0/hosp
+```
+
+```{bash}
+ls -l /mnt/mimiciv/1.0/icu
+```
+
+The reason of using `.gz` files: these data files have relatively large size (see above); using `.gz` helps reduce file sizes for transportation or storage purposes. `.gz` files also have handy features like storing original file name and time-stamp, enabling users to recover original file information even after the file was transferred. 
+
 
 3. Briefly describe what bash commands `zcat`, `zless`, `zmore`, and `zgrep` do.
+
+**Answer:**
+
+- `zcat`: is used to view the content of compressed file; it can also be used to decompress file (combining with pipe).
+- `zless`: is used to paginate a compressed file without reading the entire file, which is same as `zcat [FILENAME] | less`.
+- `zmore`: is also used to view a compressed file page by page, which is same as `zcat [FILENAME] | more`.
+- `zgrep`: is used to search inside a compressed file; it prints lines that match an expression.
+
 
 4. What's the output of following bash script?
     ```{bash, eval=F}

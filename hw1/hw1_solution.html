@@ -224,7 +224,6 @@ pre code {
 ## -rw-r--r--. 1 root root  797 Jan  4 21:48 index.html
 ## -rw-r--r--. 1 root root 2518 Jan  4 21:54 LICENSE.txt
 ## -rw-r--r--. 1 root root 2459 Jan  4 21:48 SHA256SUMS.txt</code></pre>
-<p>Please, do <strong>not</strong> put these data files into Git; they are big. Do <strong>not</strong> copy them into your directory. Do <strong>not</strong> decompress the gz data files. These create unnecessary big files on storage and are not big data friendly practices. Just read from the data folder <code>/mnt/mimiciv/1.0</code> directly in following exercises.</p>
 <p>Use Bash commands to answer following questions.</p></li>
 <li><p>Display the contents in the folders <code>core</code>, <code>hosp</code>, <code>icu</code>. Why are these data files distributed as <code>.csv.gz</code> files instead of <code>.csv</code> (comma separated values) files? Read the page <a href="https://mimic.mit.edu/docs/iv/" class="uri">https://mimic.mit.edu/docs/iv/</a> to understand what’s in each folder.</p></li>
 </ol>
@@ -234,8 +233,48 @@ pre code {
 ## -rw-r--r--. 1 root root      606 Jan  4 21:48 index.html
 ## -rw-r--r--. 1 root root  2955582 Jan  4 21:48 patients.csv.gz
 ## -rw-r--r--. 1 root root 53014503 Jan  4 21:48 transfers.csv.gz</code></pre>
+<pre class="bash"><code>ls -l /mnt/mimiciv/1.0/hosp</code></pre>
+<pre><code>## total 4454012
+## -rw-r--r--. 1 root root     430049 Jan  4 21:51 d_hcpcs.csv.gz
+## -rw-r--r--. 1 root root   29531152 Jan  4 21:48 diagnoses_icd.csv.gz
+## -rw-r--r--. 1 root root     863239 Jan  4 21:48 d_icd_diagnoses.csv.gz
+## -rw-r--r--. 1 root root     579998 Jan  4 21:48 d_icd_procedures.csv.gz
+## -rw-r--r--. 1 root root      14898 Jan  4 21:48 d_labitems.csv.gz
+## -rw-r--r--. 1 root root   11684062 Jan  4 21:51 drgcodes.csv.gz
+## -rw-r--r--. 1 root root  515763427 Jan  4 21:51 emar.csv.gz
+## -rw-r--r--. 1 root root  476252563 Jan  4 21:48 emar_detail.csv.gz
+## -rw-r--r--. 1 root root    2098831 Jan  4 21:51 hcpcsevents.csv.gz
+## -rw-r--r--. 1 root root       2325 Jan  4 21:48 index.html
+## -rw-r--r--. 1 root root 2091865786 Jan  4 21:50 labevents.csv.gz
+## -rw-r--r--. 1 root root   99133381 Jan  4 21:48 microbiologyevents.csv.gz
+## -rw-r--r--. 1 root root  422874088 Jan  4 21:48 pharmacy.csv.gz
+## -rw-r--r--. 1 root root  501381155 Jan  4 21:51 poe.csv.gz
+## -rw-r--r--. 1 root root   24020923 Jan  4 21:48 poe_detail.csv.gz
+## -rw-r--r--. 1 root root  367041717 Jan  4 21:49 prescriptions.csv.gz
+## -rw-r--r--. 1 root root    7750325 Jan  4 21:48 procedures_icd.csv.gz
+## -rw-r--r--. 1 root root    9565293 Jan  4 21:48 services.csv.gz</code></pre>
+<pre class="bash"><code>ls -l /mnt/mimiciv/1.0/icu</code></pre>
+<pre><code>## total 2741332
+## -rw-r--r--. 1 root root 2350783547 Jan  4 21:54 chartevents.csv.gz
+## -rw-r--r--. 1 root root   43296273 Jan  4 21:52 datetimeevents.csv.gz
+## -rw-r--r--. 1 root root      55917 Jan  4 21:52 d_items.csv.gz
+## -rw-r--r--. 1 root root    2848628 Jan  4 21:52 icustays.csv.gz
+## -rw-r--r--. 1 root root       1103 Jan  4 21:52 index.html
+## -rw-r--r--. 1 root root  352443512 Jan  4 21:52 inputevents.csv.gz
+## -rw-r--r--. 1 root root   37095672 Jan  4 21:52 outputevents.csv.gz
+## -rw-r--r--. 1 root root   20567368 Jan  4 21:52 procedureevents.csv.gz</code></pre>
+<p>The reason of using <code>.gz</code> files: these data files have relatively large size (see above); using <code>.gz</code> helps reduce file sizes for transportation or storage purposes. <code>.gz</code> files also have handy features like storing original file name and time-stamp, enabling users to recover original file information even after the file was transferred.</p>
 <ol start="3" style="list-style-type: decimal">
-<li><p>Briefly describe what bash commands <code>zcat</code>, <code>zless</code>, <code>zmore</code>, and <code>zgrep</code> do.</p></li>
+<li>Briefly describe what bash commands <code>zcat</code>, <code>zless</code>, <code>zmore</code>, and <code>zgrep</code> do.</li>
+</ol>
+<p><strong>Answer:</strong></p>
+<ul>
+<li><code>zcat</code>: is used to view the content of compressed file; it can also be used to decompress file (combining with pipe).</li>
+<li><code>zless</code>: is used to paginate a compressed file without reading the entire file, which is same as <code>zcat [FILENAME] | less</code>.</li>
+<li><code>zmore</code>: is also used to view a compressed file page by page, which is same as <code>zcat [FILENAME] | more</code>.</li>
+<li><code>zgrep</code>: is used to search inside a compressed file; it prints lines that match an expression.</li>
+</ul>
+<ol start="4" style="list-style-type: decimal">
 <li><p>What’s the output of following bash script?</p>
 <pre class="bash"><code>for datafile in /mnt/mimiciv/1.0/core/*.gz
   do
