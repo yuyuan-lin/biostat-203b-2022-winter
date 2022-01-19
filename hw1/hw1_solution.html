@@ -279,11 +279,90 @@ pre code {
 <pre class="bash"><code>for datafile in /mnt/mimiciv/1.0/core/*.gz
   do
     ls -l $datafile
-  done</code></pre>
-<p>Display the number of lines in each data file using a similar loop.</p></li>
-<li><p>Display the first few lines of <code>admissions.csv.gz</code>. How many rows are in this data file? How many unique patients (identified by <code>subject_id</code>) are in this data file? (Hint: combine Linux commands <code>zcat</code>, <code>head</code>/<code>tail</code>, <code>awk</code>, <code>sort</code>, <code>uniq</code>, <code>wc</code>, and so on.)</p></li>
-<li><p>What are the possible values taken by each of the variable <code>admission_type</code>, <code>admission_location</code>, <code>insurance</code>, and <code>ethnicity</code>? Also report the count for each unique value of these variables. (Hint: combine Linux commands <code>zcat</code>, <code>head</code>/<code>tail</code>, <code>awk</code>, <code>uniq -c</code>, <code>wc</code>, and so on.)</p></li>
+  done</code></pre></li>
 </ol>
+<p><strong>Answer:</strong> This bash script shows the information of all the <code>.gz</code> data files under the <code>/mnt/mimiciv/1.0/core/</code> directory.</p>
+<p>Display the number of lines in each data file using a similar loop.</p>
+<pre class="bash"><code>for datafile in /mnt/mimiciv/1.0/core/*.gz
+  do
+    zcat $datafile | wc -l
+  done</code></pre>
+<pre><code>## 523741
+## 382279
+## 2189536</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>Display the first few lines of <code>admissions.csv.gz</code>. How many rows are in this data file? How many unique patients (identified by <code>subject_id</code>) are in this data file? (Hint: combine Linux commands <code>zcat</code>, <code>head</code>/<code>tail</code>, <code>awk</code>, <code>sort</code>, <code>uniq</code>, <code>wc</code>, and so on.)</li>
+</ol>
+<p><strong>Answer:</strong></p>
+<p>Display the first 10 rows:</p>
+<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk &#39;(NR &lt;= 10)&#39;</code></pre>
+<pre><code>## subject_id,hadm_id,admittime,dischtime,deathtime,admission_type,admission_location,discharge_location,insurance,language,marital_status,ethnicity,edregtime,edouttime,hospital_expire_flag
+## 14679932,21038362,2139-09-26 14:16:00,2139-09-28 11:30:00,,ELECTIVE,,HOME,Other,ENGLISH,SINGLE,UNKNOWN,,,0
+## 15585972,24941086,2123-10-07 23:56:00,2123-10-12 11:22:00,,ELECTIVE,,HOME,Other,ENGLISH,,WHITE,,,0
+## 11989120,21965160,2147-01-14 09:00:00,2147-01-17 14:25:00,,ELECTIVE,,HOME,Other,ENGLISH,,UNKNOWN,,,0
+## 17817079,24709883,2165-12-27 17:33:00,2165-12-31 21:18:00,,ELECTIVE,,HOME,Other,ENGLISH,,OTHER,,,0
+## 15078341,23272159,2122-08-28 08:48:00,2122-08-30 12:32:00,,ELECTIVE,,HOME,Other,ENGLISH,,BLACK/AFRICAN AMERICAN,,,0
+## 19124609,20517215,2169-03-14 12:44:00,2169-03-20 19:15:00,,ELECTIVE,,HOME,Other,ENGLISH,,UNKNOWN,,,0
+## 17301855,29732723,2140-06-06 14:23:00,2140-06-08 14:25:00,,ELECTIVE,,HOME,Other,ENGLISH,,WHITE,,,0
+## 17991012,24298836,2181-07-10 20:28:00,2181-07-12 15:49:00,,ELECTIVE,,HOME,Other,ENGLISH,,WHITE,,,0
+## 16865435,23216961,2185-07-19 02:12:00,2185-07-21 11:50:00,,ELECTIVE,,HOME,Other,ENGLISH,,WHITE,,,0</code></pre>
+<p>Display the number of rows in the file:</p>
+<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | wc -l</code></pre>
+<pre><code>## 523741</code></pre>
+<p>Display the number of unique patients:</p>
+<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, &#39;{if (NR &gt; 1) print $1 }&#39; | sort | uniq | wc -l</code></pre>
+<pre><code>## 256878</code></pre>
+<ol start="6" style="list-style-type: decimal">
+<li>What are the possible values taken by each of the variable <code>admission_type</code>, <code>admission_location</code>, <code>insurance</code>, and <code>ethnicity</code>? Also report the count for each unique value of these variables. (Hint: combine Linux commands <code>zcat</code>, <code>head</code>/<code>tail</code>, <code>awk</code>, <code>uniq -c</code>, <code>wc</code>, and so on.)</li>
+</ol>
+<p><strong>Answer:</strong> For <code>admission_type</code>: there are 9 different possible values, and the counts for each unique values are shown below.</p>
+<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, &#39;{if (NR &gt; 1) print $6 }&#39; | sort | uniq | wc -l</code></pre>
+<pre><code>## 9</code></pre>
+<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, &#39;{if (NR &gt; 1) print $6 }&#39; | sort | uniq -c</code></pre>
+<pre><code>##    7254 AMBULATORY OBSERVATION
+##   21581 DIRECT EMER.
+##   19991 DIRECT OBSERVATION
+##   72072 ELECTIVE
+##  100445 EU OBSERVATION
+##  157896 EW EMER.
+##   55497 OBSERVATION ADMIT
+##   41074 SURGICAL SAME DAY ADMISSION
+##   47930 URGENT</code></pre>
+<p>For <code>admission_location</code>: there are 12 different possible values (including blank/missing), and the counts for each unique values are shown below.</p>
+<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, &#39;{if (NR &gt; 1) print $7 }&#39; | sort | uniq | wc -l</code></pre>
+<pre><code>## 12</code></pre>
+<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, &#39;{if (NR &gt; 1) print $7 }&#39; | sort | uniq -c</code></pre>
+<pre><code>##   60435 
+##     191 AMBULATORY SURGERY TRANSFER
+##   10670 CLINIC REFERRAL
+##  245744 EMERGENCY ROOM
+##     379 INFORMATION NOT AVAILABLE
+##    4467 INTERNAL TRANSFER TO OR FROM PSYCH
+##    6067 PACU
+##  127494 PHYSICIAN REFERRAL
+##    8449 PROCEDURE SITE
+##   39121 TRANSFER FROM HOSPITAL
+##    4063 TRANSFER FROM SKILLED NURSING FACILITY
+##   16660 WALK-IN/SELF REFERRAL</code></pre>
+<p>For <code>insurance</code>: there are 3 different possible values, and the counts for each unique values are shown below.</p>
+<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, &#39;{if (NR &gt; 1) print $9 }&#39; | sort | uniq | wc -l</code></pre>
+<pre><code>## 3</code></pre>
+<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, &#39;{if (NR &gt; 1) print $9 }&#39; | sort | uniq -c</code></pre>
+<pre><code>##   50850 Medicaid
+##  171360 Medicare
+##  301530 Other</code></pre>
+<p>For <code>ethnicity</code>: there are 8 different possible values, and the counts for each unique values are shown below.</p>
+<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, &#39;{if (NR &gt; 1) print $12 }&#39; | sort | uniq | wc -l</code></pre>
+<pre><code>## 8</code></pre>
+<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, &#39;{if (NR &gt; 1) print $12 }&#39; | sort | uniq -c</code></pre>
+<pre><code>##    1535 AMERICAN INDIAN/ALASKA NATIVE
+##   24506 ASIAN
+##   80293 BLACK/AFRICAN AMERICAN
+##   29823 HISPANIC/LATINO
+##   26813 OTHER
+##    3740 UNABLE TO OBTAIN
+##   19400 UNKNOWN
+##  337630 WHITE</code></pre>
 </div>
 <div id="q4.-whos-popular-in-price-and-prejudice" class="section level2">
 <h2>Q4. Who’s popular in Price and Prejudice</h2>

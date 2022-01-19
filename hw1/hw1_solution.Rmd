@@ -74,11 +74,74 @@ The reason of using `.gz` files: these data files have relatively large size (se
         ls -l $datafile
       done
     ```
+
+**Answer:** This bash script shows the information of all the `.gz` data files under the `/mnt/mimiciv/1.0/core/` directory.
+
 Display the number of lines in each data file using a similar loop.
+```{bash}
+for datafile in /mnt/mimiciv/1.0/core/*.gz
+  do
+    zcat $datafile | wc -l
+  done
+```
+
 
 5. Display the first few lines of `admissions.csv.gz`. How many rows are in this data file? How many unique patients (identified by `subject_id`) are in this data file? (Hint: combine Linux commands `zcat`, `head`/`tail`, `awk`, `sort`, `uniq`, `wc`, and so on.)
 
+**Answer:**
+
+Display the first 10 rows:
+```{bash}
+zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk '(NR <= 10)'
+```
+
+Display the number of rows in the file:
+```{bash}
+zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | wc -l
+```
+
+Display the number of unique patients:
+```{bash}
+zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $1 }' | sort | uniq | wc -l
+```
+
 6. What are the possible values taken by each of the variable `admission_type`, `admission_location`, `insurance`, and `ethnicity`? Also report the count for each unique value of these variables. (Hint: combine Linux commands `zcat`, `head`/`tail`, `awk`, `uniq -c`, `wc`, and so on.)
+
+**Answer:**
+For `admission_type`: there are 9 different possible values, and the counts for each unique values are shown below.
+```{bash}
+zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $6 }' | sort | uniq | wc -l
+```
+
+```{bash}
+zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $6 }' | sort | uniq -c
+```
+For `admission_location`: there are 12 different possible values (including blank/missing), and the counts for each unique values are shown below.
+```{bash}
+zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $7 }' | sort | uniq | wc -l
+```
+
+```{bash}
+zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $7 }' | sort | uniq -c
+```
+
+For `insurance`: there are 3 different possible values, and the counts for each unique values are shown below.
+```{bash}
+zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $9 }' | sort | uniq | wc -l
+```
+
+```{bash}
+zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $9 }' | sort | uniq -c
+```
+
+For `ethnicity`: there are 8 different possible values, and the counts for each unique values are shown below.
+```{bash}
+zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $12 }' | sort | uniq | wc -l
+```
+
+```{bash}
+zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $12 }' | sort | uniq -c
+```
 
 ## Q4. Who's popular in Price and Prejudice
 
