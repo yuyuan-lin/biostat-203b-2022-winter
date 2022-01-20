@@ -225,8 +225,7 @@ pre code {
 ## -rw-r--r--. 1 root root 2518 Jan  4 21:54 LICENSE.txt
 ## -rw-r--r--. 1 root root 2459 Jan  4 21:48 SHA256SUMS.txt</code></pre>
 <p>Use Bash commands to answer following questions.</p></li>
-<li><p>Display the contents in the folders <code>core</code>, <code>hosp</code>, <code>icu</code>. Why are these data files distributed as <code>.csv.gz</code> files instead of <code>.csv</code> (comma separated values) files? Read the page <a href="https://mimic.mit.edu/docs/iv/" class="uri">https://mimic.mit.edu/docs/iv/</a> to understand what’s in each folder.</p></li>
-</ol>
+<li><p>Display the contents in the folders <code>core</code>, <code>hosp</code>, <code>icu</code>. Why are these data files distributed as <code>.csv.gz</code> files instead of <code>.csv</code> (comma separated values) files? Read the page <a href="https://mimic.mit.edu/docs/iv/" class="uri">https://mimic.mit.edu/docs/iv/</a> to understand what’s in each folder.</p>
 <pre class="bash"><code>ls -l /mnt/mimiciv/1.0/core</code></pre>
 <pre><code>## total 71472
 ## -rw-r--r--. 1 root root 17208966 Jan  4 21:48 admissions.csv.gz
@@ -263,24 +262,20 @@ pre code {
 ## -rw-r--r--. 1 root root  352443512 Jan  4 21:52 inputevents.csv.gz
 ## -rw-r--r--. 1 root root   37095672 Jan  4 21:52 outputevents.csv.gz
 ## -rw-r--r--. 1 root root   20567368 Jan  4 21:52 procedureevents.csv.gz</code></pre>
-<p>The reason of using <code>.gz</code> files: these data files have relatively large size (see above); using <code>.gz</code> helps reduce file sizes for transportation or storage purposes. <code>.gz</code> files also have handy features like storing original file name and time-stamp, enabling users to recover original file information even after the file was transferred.</p>
-<ol start="3" style="list-style-type: decimal">
-<li>Briefly describe what bash commands <code>zcat</code>, <code>zless</code>, <code>zmore</code>, and <code>zgrep</code> do.</li>
-</ol>
+<p><strong>Answer:</strong> The reason of using <code>.gz</code> files: these data files have relatively large size (see above); using <code>.gz</code> helps reduce file sizes for transportation or storage purposes. <code>.gz</code> files also have handy features like storing original file name and time-stamp, enabling users to recover original file information even after the file was transferred.</p></li>
+<li><p>Briefly describe what bash commands <code>zcat</code>, <code>zless</code>, <code>zmore</code>, and <code>zgrep</code> do.</p>
 <p><strong>Answer:</strong></p>
 <ul>
 <li><code>zcat</code>: is used to view the content of compressed file; it can also be used to decompress file (combining with pipe).</li>
 <li><code>zless</code>: is used to paginate a compressed file without reading the entire file, which is same as <code>zcat [FILENAME] | less</code>.</li>
 <li><code>zmore</code>: is also used to view a compressed file page by page, which is same as <code>zcat [FILENAME] | more</code>.</li>
 <li><code>zgrep</code>: is used to search inside a compressed file; it prints lines that match an expression.</li>
-</ul>
-<ol start="4" style="list-style-type: decimal">
+</ul></li>
 <li><p>What’s the output of following bash script?</p>
 <pre class="bash"><code>for datafile in /mnt/mimiciv/1.0/core/*.gz
   do
     ls -l $datafile
-  done</code></pre></li>
-</ol>
+  done</code></pre>
 <p><strong>Answer:</strong> This bash script shows the information of all the <code>.gz</code> data files under the <code>/mnt/mimiciv/1.0/core/</code> directory.</p>
 <p>Display the number of lines in each data file using a similar loop.</p>
 <pre class="bash"><code>for datafile in /mnt/mimiciv/1.0/core/*.gz
@@ -289,10 +284,8 @@ pre code {
   done</code></pre>
 <pre><code>## 523741
 ## 382279
-## 2189536</code></pre>
-<ol start="5" style="list-style-type: decimal">
-<li>Display the first few lines of <code>admissions.csv.gz</code>. How many rows are in this data file? How many unique patients (identified by <code>subject_id</code>) are in this data file? (Hint: combine Linux commands <code>zcat</code>, <code>head</code>/<code>tail</code>, <code>awk</code>, <code>sort</code>, <code>uniq</code>, <code>wc</code>, and so on.)</li>
-</ol>
+## 2189536</code></pre></li>
+<li><p>Display the first few lines of <code>admissions.csv.gz</code>. How many rows are in this data file? How many unique patients (identified by <code>subject_id</code>) are in this data file? (Hint: combine Linux commands <code>zcat</code>, <code>head</code>/<code>tail</code>, <code>awk</code>, <code>sort</code>, <code>uniq</code>, <code>wc</code>, and so on.)</p>
 <p><strong>Answer:</strong></p>
 <p>Display the first 10 rows:</p>
 <pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk &#39;(NR &lt;= 10)&#39;</code></pre>
@@ -311,10 +304,8 @@ pre code {
 <pre><code>## 523741</code></pre>
 <p>Display the number of unique patients:</p>
 <pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, &#39;{if (NR &gt; 1) print $1 }&#39; | sort | uniq | wc -l</code></pre>
-<pre><code>## 256878</code></pre>
-<ol start="6" style="list-style-type: decimal">
-<li>What are the possible values taken by each of the variable <code>admission_type</code>, <code>admission_location</code>, <code>insurance</code>, and <code>ethnicity</code>? Also report the count for each unique value of these variables. (Hint: combine Linux commands <code>zcat</code>, <code>head</code>/<code>tail</code>, <code>awk</code>, <code>uniq -c</code>, <code>wc</code>, and so on.)</li>
-</ol>
+<pre><code>## 256878</code></pre></li>
+<li><p>What are the possible values taken by each of the variable <code>admission_type</code>, <code>admission_location</code>, <code>insurance</code>, and <code>ethnicity</code>? Also report the count for each unique value of these variables. (Hint: combine Linux commands <code>zcat</code>, <code>head</code>/<code>tail</code>, <code>awk</code>, <code>uniq -c</code>, <code>wc</code>, and so on.)</p>
 <p><strong>Answer:</strong> For <code>admission_type</code>: there are 9 different possible values, and the counts for each unique values are shown below.</p>
 <pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, &#39;{if (NR &gt; 1) print $6 }&#39; | sort | uniq | wc -l</code></pre>
 <pre><code>## 9</code></pre>
@@ -362,7 +353,8 @@ pre code {
 ##   26813 OTHER
 ##    3740 UNABLE TO OBTAIN
 ##   19400 UNKNOWN
-##  337630 WHITE</code></pre>
+##  337630 WHITE</code></pre></li>
+</ol>
 </div>
 <div id="q4.-whos-popular-in-price-and-prejudice" class="section level2">
 <h2>Q4. Who’s popular in Price and Prejudice</h2>
@@ -370,6 +362,7 @@ pre code {
 <li><p>You and your friend just have finished reading <em>Pride and Prejudice</em> by Jane Austen. Among the four main characters in the book, Elizabeth, Jane, Lydia, and Darcy, your friend thinks that Darcy was the most mentioned. You, however, are certain it was Elizabeth. Obtain the full text of the novel from <a href="http://www.gutenberg.org/cache/epub/42671/pg42671.txt" class="uri">http://www.gutenberg.org/cache/epub/42671/pg42671.txt</a> and save to your local folder.</p>
 <pre class="bash"><code>wget -nc http://www.gutenberg.org/cache/epub/42671/pg42671.txt</code></pre>
 <p>Explain what <code>wget -nc</code> does. Do <strong>not</strong> put this text file <code>pg42671.txt</code> in Git. Complete the following loop to tabulate the number of times each of the four characters is mentioned using Linux commands.</p>
+<p><strong>Answer:</strong> <code>wget -nc</code> retrieves files from the specified http URL. The flag <code>-nc</code> means if the file already existed, <code>wget</code> would not download the latest version of the file.</p>
 <pre class="bash"><code>wget -nc http://www.gutenberg.org/cache/epub/42671/pg42671.txt
 for char in Elizabeth Jane Lydia Darcy
 do

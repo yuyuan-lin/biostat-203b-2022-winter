@@ -21,11 +21,11 @@ Please refer to my GitHub private repo [biostat-203b-2022-winter](https://github
 ## Q2. Data ethics training
 
 **My verification links**
-
+    
 [Completion Report](https://www.citiprogram.org/verify/?k78527830-9ab5-4fc8-a11f-628b252e0f4b-46576479)
-
+    
 [Completion Certificate](https://www.citiprogram.org/verify/?w927396e3-b866-4ccd-a131-82b37ead8898-46576479)
-
+    
 If the above links do not work, please copy and paste the following links into your browser:
 
 1. https://www.citiprogram.org/verify/?k78527830-9ab5-4fc8-a11f-628b252e0f4b-46576479
@@ -42,30 +42,30 @@ If the above links do not work, please copy and paste the following links into y
 
 2. Display the contents in the folders `core`, `hosp`, `icu`. Why are these data files distributed as `.csv.gz` files instead of `.csv` (comma separated values) files? Read the page <https://mimic.mit.edu/docs/iv/> to understand what's in each folder.
 
-```{bash}
-ls -l /mnt/mimiciv/1.0/core
-```
+    ```{bash}
+    ls -l /mnt/mimiciv/1.0/core
+    ```
 
-```{bash}
-ls -l /mnt/mimiciv/1.0/hosp
-```
+    ```{bash}
+    ls -l /mnt/mimiciv/1.0/hosp
+    ```
 
-```{bash}
-ls -l /mnt/mimiciv/1.0/icu
-```
+    ```{bash}
+    ls -l /mnt/mimiciv/1.0/icu
+    ```
 
-The reason of using `.gz` files: these data files have relatively large size (see above); using `.gz` helps reduce file sizes for transportation or storage purposes. `.gz` files also have handy features like storing original file name and time-stamp, enabling users to recover original file information even after the file was transferred. 
-
+    **Answer:** The reason of using `.gz` files: these data files have relatively large size (see above); using `.gz` helps reduce file sizes for transportation or storage purposes. `.gz` files also have handy features like storing original file name and time-stamp, enabling users to recover original file information even after the file was transferred. 
+    
 
 3. Briefly describe what bash commands `zcat`, `zless`, `zmore`, and `zgrep` do.
 
-**Answer:**
-
-- `zcat`: is used to view the content of compressed file; it can also be used to decompress file (combining with pipe).
-- `zless`: is used to paginate a compressed file without reading the entire file, which is same as `zcat [FILENAME] | less`.
-- `zmore`: is also used to view a compressed file page by page, which is same as `zcat [FILENAME] | more`.
-- `zgrep`: is used to search inside a compressed file; it prints lines that match an expression.
-
+    **Answer:**
+    
+    - `zcat`: is used to view the content of compressed file; it can also be used to decompress file (combining with pipe).
+    - `zless`: is used to paginate a compressed file without reading the entire file, which is same as `zcat [FILENAME] | less`.
+    - `zmore`: is also used to view a compressed file page by page, which is same as `zcat [FILENAME] | more`.
+    - `zgrep`: is used to search inside a compressed file; it prints lines that match an expression.
+    
 
 4. What's the output of following bash script?
     ```{bash, eval=F}
@@ -75,73 +75,73 @@ The reason of using `.gz` files: these data files have relatively large size (se
       done
     ```
 
-**Answer:** This bash script shows the information of all the `.gz` data files under the `/mnt/mimiciv/1.0/core/` directory.
+    **Answer:** This bash script shows the information of all the `.gz` data files under the `/mnt/mimiciv/1.0/core/` directory.
 
-Display the number of lines in each data file using a similar loop.
-```{bash}
-for datafile in /mnt/mimiciv/1.0/core/*.gz
-  do
-    zcat $datafile | wc -l
-  done
-```
-
+    Display the number of lines in each data file using a similar loop.
+    ```{bash}
+    for datafile in /mnt/mimiciv/1.0/core/*.gz
+      do
+        zcat $datafile | wc -l
+      done
+    ```
 
 5. Display the first few lines of `admissions.csv.gz`. How many rows are in this data file? How many unique patients (identified by `subject_id`) are in this data file? (Hint: combine Linux commands `zcat`, `head`/`tail`, `awk`, `sort`, `uniq`, `wc`, and so on.)
 
-**Answer:**
+    **Answer:**
 
-Display the first 10 rows:
-```{bash}
-zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk '(NR <= 10)'
-```
+    Display the first 10 rows:
+    ```{bash}
+    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk '(NR <= 10)'
+    ```
 
-Display the number of rows in the file:
-```{bash}
-zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | wc -l
-```
+    Display the number of rows in the file:
+    ```{bash}
+    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | wc -l
+    ```
 
-Display the number of unique patients:
-```{bash}
-zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $1 }' | sort | uniq | wc -l
-```
+    Display the number of unique patients:
+    ```{bash}
+    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $1 }' | sort | uniq | wc -l
+    ```
 
 6. What are the possible values taken by each of the variable `admission_type`, `admission_location`, `insurance`, and `ethnicity`? Also report the count for each unique value of these variables. (Hint: combine Linux commands `zcat`, `head`/`tail`, `awk`, `uniq -c`, `wc`, and so on.)
 
-**Answer:**
-For `admission_type`: there are 9 different possible values, and the counts for each unique values are shown below.
-```{bash}
-zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $6 }' | sort | uniq | wc -l
-```
+    **Answer:**
+    For `admission_type`: there are 9 different possible values, and the counts for each unique values are shown below.
+    ```{bash}
+    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $6 }' | sort | uniq | wc -l
+    ```
 
-```{bash}
-zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $6 }' | sort | uniq -c
-```
-For `admission_location`: there are 12 different possible values (including blank/missing), and the counts for each unique values are shown below.
-```{bash}
-zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $7 }' | sort | uniq | wc -l
-```
+    ```{bash}
+    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $6 }' | sort | uniq -c
+    ```
 
-```{bash}
-zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $7 }' | sort | uniq -c
-```
+    For `admission_location`: there are 12 different possible values (including blank/missing), and the counts for each unique values are shown below.
+    ```{bash}
+    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $7 }' | sort | uniq | wc -l
+    ```
+    
+    ```{bash}
+    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $7 }' | sort | uniq -c
+    ```
 
-For `insurance`: there are 3 different possible values, and the counts for each unique values are shown below.
-```{bash}
-zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $9 }' | sort | uniq | wc -l
-```
+    For `insurance`: there are 3 different possible values, and the counts for each unique values are shown below.
+    ```{bash}
+    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $9 }' | sort | uniq | wc -l
+    ```
+    
+    ```{bash}
+    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $9 }' | sort | uniq -c
+    ```
 
-```{bash}
-zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $9 }' | sort | uniq -c
-```
-
-For `ethnicity`: there are 8 different possible values, and the counts for each unique values are shown below.
-```{bash}
-zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $12 }' | sort | uniq | wc -l
-```
-
-```{bash}
-zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $12 }' | sort | uniq -c
-```
+    For `ethnicity`: there are 8 different possible values, and the counts for each unique values are shown below.
+    ```{bash}
+    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $12 }' | sort | uniq | wc -l
+    ```
+    
+    ```{bash}
+    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $12 }' | sort | uniq -c
+    ```
 
 ## Q4. Who's popular in Price and Prejudice
 
@@ -150,6 +150,9 @@ zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $12 }
     wget -nc http://www.gutenberg.org/cache/epub/42671/pg42671.txt
     ```
 Explain what `wget -nc` does. Do **not** put this text file `pg42671.txt` in Git. Complete the following loop to tabulate the number of times each of the four characters is mentioned using Linux commands.
+    
+    **Answer:** `wget -nc` retrieves files from the specified http URL. The flag `-nc` means if the file already existed, `wget` would not download the latest version of the file.
+
     ```{bash, eval=FALSE}
     wget -nc http://www.gutenberg.org/cache/epub/42671/pg42671.txt
     for char in Elizabeth Jane Lydia Darcy
