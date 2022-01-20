@@ -363,16 +363,25 @@ pre code {
 <pre class="bash"><code>wget -nc http://www.gutenberg.org/cache/epub/42671/pg42671.txt</code></pre>
 <p>Explain what <code>wget -nc</code> does. Do <strong>not</strong> put this text file <code>pg42671.txt</code> in Git. Complete the following loop to tabulate the number of times each of the four characters is mentioned using Linux commands.</p>
 <p><strong>Answer:</strong> <code>wget -nc</code> retrieves files from the specified http URL. The flag <code>-nc</code> means if the file already existed, <code>wget</code> would not download the latest version of the file.</p>
-<pre class="bash"><code>wget -nc http://www.gutenberg.org/cache/epub/42671/pg42671.txt
+<pre class="bash"><code># wget -nc http://www.gutenberg.org/cache/epub/42671/pg42671.txt
 for char in Elizabeth Jane Lydia Darcy
 do
   echo $char:
-  # some commands here
-done</code></pre></li>
+  grep -o $char pg42671.txt | wc -l
+done</code></pre>
+<pre><code>## Elizabeth:
+## 634
+## Jane:
+## 294
+## Lydia:
+## 170
+## Darcy:
+## 417</code></pre></li>
 <li><p>What’s the difference between the following two commands?</p>
 <pre class="bash"><code>echo &#39;hello, world&#39; &gt; test1.txt</code></pre>
 <p>and</p>
-<pre class="bash"><code>echo &#39;hello, world&#39; &gt;&gt; test2.txt</code></pre></li>
+<pre class="bash"><code>echo &#39;hello, world&#39; &gt;&gt; test2.txt</code></pre>
+<p><strong>Answer:</strong> the first command overwrote the <code>test1.txt</code> and changed its content to “hello world”; the second one appended “hello world” to the end of original file.</p></li>
 <li><p>Using your favorite text editor (e.g., <code>vi</code>), type the following and save the file as <code>middle.sh</code>:</p>
 <pre class="bash"><code>#!/bin/sh
 # Select lines from the middle of a file.
@@ -380,11 +389,120 @@ done</code></pre></li>
 head -n &quot;$2&quot; &quot;$1&quot; | tail -n &quot;$3&quot;</code></pre>
 <p>Using <code>chmod</code> make the file executable by the owner, and run</p>
 <pre class="bash"><code>./middle.sh pg42671.txt 20 5</code></pre>
-<p>Explain the output. Explain the meaning of <code>&quot;$1&quot;</code>, <code>&quot;$2&quot;</code>, and <code>&quot;$3&quot;</code> in this shell script. Why do we need the first line of the shell script?</p></li>
+<p>Explain the output. Explain the meaning of <code>&quot;$1&quot;</code>, <code>&quot;$2&quot;</code>, and <code>&quot;$3&quot;</code> in this shell script. Why do we need the first line of the shell script?</p>
+<p><strong>Answer:</strong> The output shows the 16th to 20th lines of <em>Pride and Prejudice</em>, which include the author and editor of the book. The <code>$1</code>, <code>$2</code> and <code>$3</code> refer to the first, second and third parameters passed to the <code>sh</code> script, which in this case, is <code>pg42671.txt</code>, <code>20</code> and <code>5</code>. The first line of the script tells the OS to invoke the specified shell to execute the commands following (which is <code>sh</code> here).</p></li>
 </ol>
 <div id="q5.-more-fun-with-linux" class="section level3">
 <h3>Q5. More fun with Linux</h3>
 <p>Try following commands in Bash and interpret the results: <code>cal</code>, <code>cal 2021</code>, <code>cal 9 1752</code> (anything unusual?), <code>date</code>, <code>hostname</code>, <code>arch</code>, <code>uname -a</code>, <code>uptime</code>, <code>who am i</code>, <code>who</code>, <code>w</code>, <code>id</code>, <code>last | head</code>, <code>echo {con,pre}{sent,fer}{s,ed}</code>, <code>time sleep 5</code>, <code>history | tail</code>.</p>
+<pre class="bash"><code>cal</code></pre>
+<pre><code>##     January 2022    
+## Su Mo Tu We Th Fr Sa
+##                    1
+##  2  3  4  5  6  7  8
+##  9 10 11 12 13 14 15
+## 16 17 18 19 20 21 22
+## 23 24 25 26 27 28 29
+## 30 31</code></pre>
+<p><code>cal</code> prints current date (in the month calendar).</p>
+<pre class="bash"><code>cal 2021</code></pre>
+<pre><code>##                                2021                               
+## 
+##        January               February                 March       
+## Su Mo Tu We Th Fr Sa   Su Mo Tu We Th Fr Sa   Su Mo Tu We Th Fr Sa
+##                 1  2       1  2  3  4  5  6       1  2  3  4  5  6
+##  3  4  5  6  7  8  9    7  8  9 10 11 12 13    7  8  9 10 11 12 13
+## 10 11 12 13 14 15 16   14 15 16 17 18 19 20   14 15 16 17 18 19 20
+## 17 18 19 20 21 22 23   21 22 23 24 25 26 27   21 22 23 24 25 26 27
+## 24 25 26 27 28 29 30   28                     28 29 30 31
+## 31
+##         April                   May                   June        
+## Su Mo Tu We Th Fr Sa   Su Mo Tu We Th Fr Sa   Su Mo Tu We Th Fr Sa
+##              1  2  3                      1          1  2  3  4  5
+##  4  5  6  7  8  9 10    2  3  4  5  6  7  8    6  7  8  9 10 11 12
+## 11 12 13 14 15 16 17    9 10 11 12 13 14 15   13 14 15 16 17 18 19
+## 18 19 20 21 22 23 24   16 17 18 19 20 21 22   20 21 22 23 24 25 26
+## 25 26 27 28 29 30      23 24 25 26 27 28 29   27 28 29 30
+##                        30 31
+##         July                  August                September     
+## Su Mo Tu We Th Fr Sa   Su Mo Tu We Th Fr Sa   Su Mo Tu We Th Fr Sa
+##              1  2  3    1  2  3  4  5  6  7             1  2  3  4
+##  4  5  6  7  8  9 10    8  9 10 11 12 13 14    5  6  7  8  9 10 11
+## 11 12 13 14 15 16 17   15 16 17 18 19 20 21   12 13 14 15 16 17 18
+## 18 19 20 21 22 23 24   22 23 24 25 26 27 28   19 20 21 22 23 24 25
+## 25 26 27 28 29 30 31   29 30 31               26 27 28 29 30
+## 
+##        October               November               December      
+## Su Mo Tu We Th Fr Sa   Su Mo Tu We Th Fr Sa   Su Mo Tu We Th Fr Sa
+##                 1  2       1  2  3  4  5  6             1  2  3  4
+##  3  4  5  6  7  8  9    7  8  9 10 11 12 13    5  6  7  8  9 10 11
+## 10 11 12 13 14 15 16   14 15 16 17 18 19 20   12 13 14 15 16 17 18
+## 17 18 19 20 21 22 23   21 22 23 24 25 26 27   19 20 21 22 23 24 25
+## 24 25 26 27 28 29 30   28 29 30               26 27 28 29 30 31
+## 31</code></pre>
+<p><code>cal 2021</code> prints the calendar of year 2021.</p>
+<pre class="bash"><code>cal 9 1752</code></pre>
+<pre><code>##    September 1752   
+## Su Mo Tu We Th Fr Sa
+##        1  2 14 15 16
+## 17 18 19 20 21 22 23
+## 24 25 26 27 28 29 30</code></pre>
+<p><code>cal 9 1752</code> is supposed to print the calendar of September 1752. A few days were missing in the calendar. It’s may be a result of [Gregorian Calendar Reformation]{<a href="https://en.wikipedia.org/wiki/Gregorian_calendar" class="uri">https://en.wikipedia.org/wiki/Gregorian_calendar</a>} as documented in <code>man cal</code>.</p>
+<pre class="bash"><code>date</code></pre>
+<pre><code>## Thu Jan 20 05:44:30 UTC 2022</code></pre>
+<p><code>date</code> command displays current date and time.</p>
+<pre class="bash"><code>hostname</code></pre>
+<pre><code>## biostat-203b-teaching-server</code></pre>
+<p><code>hostname</code> command prints the name of the current host systeml; here it gives the name of the server.</p>
+<pre class="bash"><code>arch</code></pre>
+<pre><code>## x86_64</code></pre>
+<p><code>arch</code> command with no arguments displays the architecture type of current machine.</p>
+<pre class="bash"><code>uname -a</code></pre>
+<pre><code>## Linux biostat-203b-teaching-server 3.10.0-1160.49.1.el7.x86_64 #1 SMP Tue Nov 30 15:51:32 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux</code></pre>
+<p><code>uname</code> command displays system information, the flag <code>-a</code> asks it to play all information.</p>
+<pre class="bash"><code>uptime</code></pre>
+<pre><code>##  05:44:30 up 17 days,  5:18,  3 users,  load average: 0.41, 0.20, 0.16</code></pre>
+<p><code>uptime</code> command displays how long the system has been running.</p>
+<pre class="bash"><code>who am i</code></pre>
+<p><code>who am i</code> is supposed to return the invoker’s real user name.</p>
+<pre class="bash"><code>who</code></pre>
+<pre><code>## tomokiokuno0528 pts/1        2022-01-11 01:13 (42.166.94.34.bc.googleusercontent.com)
+## tomokiokuno0528 pts/3        2022-01-10 23:43 (42.166.94.34.bc.googleusercontent.com)
+## maschepps pts/6        2022-01-17 19:33 (74.213.228.243)</code></pre>
+<p><code>who</code> command displays who is logged in.</p>
+<pre class="bash"><code>w</code></pre>
+<pre><code>##  05:44:30 up 17 days,  5:18,  3 users,  load average: 0.41, 0.20, 0.16
+## USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+## tomokiok pts/1    42.166.94.34.bc. 11Jan22  9days  0.01s  0.01s -bash
+## tomokiok pts/3    42.166.94.34.bc. 10Jan22  9days  1.03s  0.85s ssh -i /home/tomokiokuno0528/.ssh/id_rsa tomokiokuno0528@server.ucla-biostat-203b.com
+## maschepp pts/6    74.213.228.243   Mon19    2days  0.03s  0.03s -bash</code></pre>
+<p><code>w</code> command shows who is logged on and what they are doing.</p>
+<pre class="bash"><code>id</code></pre>
+<pre><code>## uid=1022(yuyuanlin) gid=1024(yuyuanlin) groups=1024(yuyuanlin) context=system_u:system_r:initrc_t:s0</code></pre>
+<p><code>id</code>: displays the user’s identity, including the user and group names and numeric IDs.</p>
+<pre class="bash"><code>last | head</code></pre>
+<pre><code>## jiahaoti pts/14       104-54-32-28.lig Thu Jan 20 02:14 - 04:59  (02:44)    
+## huazhou  pts/30       149.142.103.91   Wed Jan 19 02:23 - 02:32  (00:09)    
+## lillyhua pts/20       64.201.127.119   Wed Jan 19 01:13 - 03:56  (02:43)    
+## lillyhua pts/20       64.201.127.119   Wed Jan 19 01:10 - 01:12  (00:01)    
+## lillyhua pts/20       64.201.127.119   Wed Jan 19 00:24 - 01:10  (00:46)    
+## sharonfe pts/19       38.15.211.52     Wed Jan 19 00:20 - 00:52  (00:31)    
+## yuyuanli pts/18       149.142.103.176  Wed Jan 19 00:20 - 02:01  (01:41)    
+## inclassd pts/17       149.142.103.176  Wed Jan 19 00:20 - 02:32  (02:11)    
+## jiahaoti pts/16       104-54-32-28.lig Wed Jan 19 00:20 - 02:00  (01:40)    
+## lillyhua pts/14       64.201.127.119   Wed Jan 19 00:10 - 00:11  (00:00)</code></pre>
+<p><code>last</code> command displays the list of last logged in user, piping this command to <code>head</code> will display last 10 logged in users.</p>
+<pre class="bash"><code>echo {con,pre}{sent,fer}{s,ed}</code></pre>
+<pre><code>## consents consented confers confered presents presented prefers prefered</code></pre>
+<p>This command prints all combinations of these groups of strings (each time pick one element from each group and combine them together).</p>
+<pre class="bash"><code>time sleep 5</code></pre>
+<pre><code>## 
+## real 0m5.001s
+## user 0m0.000s
+## sys  0m0.001s</code></pre>
+<p><code>sleep 5</code> command pauses the system for 5 seconds. <code>time</code> displays the time used to execute the following command.</p>
+<pre class="bash"><code>history | tail</code></pre>
+<p><code>history</code> command displays all the commands executed. Piping this command to <code>tail</code> will display the last 10 commands excuted in shell.</p>
 </div>
 </div>
 

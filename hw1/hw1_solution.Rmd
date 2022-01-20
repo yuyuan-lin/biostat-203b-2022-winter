@@ -153,12 +153,12 @@ Explain what `wget -nc` does. Do **not** put this text file `pg42671.txt` in Git
     
     **Answer:** `wget -nc` retrieves files from the specified http URL. The flag `-nc` means if the file already existed, `wget` would not download the latest version of the file.
 
-    ```{bash, eval=FALSE}
-    wget -nc http://www.gutenberg.org/cache/epub/42671/pg42671.txt
+    ```{bash, eval = TRUE}
+    # wget -nc http://www.gutenberg.org/cache/epub/42671/pg42671.txt
     for char in Elizabeth Jane Lydia Darcy
     do
       echo $char:
-      # some commands here
+      grep -o $char pg42671.txt | wc -l
     done
     ```
 
@@ -170,6 +170,8 @@ Explain what `wget -nc` does. Do **not** put this text file `pg42671.txt` in Git
     ```{bash eval=FALSE}
     echo 'hello, world' >> test2.txt
     ```
+    
+    **Answer:** the first command overwrote the `test1.txt` and changed its content to "hello world"; the second one appended "hello world" to the end of original file.
 
 3. Using your favorite text editor (e.g., `vi`), type the following and save the file as `middle.sh`:
     ```{bash eval=FALSE}
@@ -184,6 +186,104 @@ Using `chmod` make the file executable by the owner, and run
     ```
 Explain the output. Explain the meaning of `"$1"`, `"$2"`, and `"$3"` in this shell script. Why do we need the first line of the shell script?
 
+    **Answer:** The output shows the 16th to 20th lines of *Pride and Prejudice*, which include the author and editor of the book. The `$1`, `$2` and `$3` refer to the first, second and third parameters passed to the `sh` script, which in this case, is `pg42671.txt`, `20` and `5`. The first line of the script tells the OS to invoke the specified shell to execute the commands following (which is `sh` here).
+
 ### Q5. More fun with Linux
 
 Try following commands in Bash and interpret the results: `cal`, `cal 2021`, `cal 9 1752` (anything unusual?), `date`, `hostname`, `arch`, `uname -a`, `uptime`, `who am i`, `who`, `w`, `id`, `last | head`, `echo {con,pre}{sent,fer}{s,ed}`, `time sleep 5`, `history | tail`.
+
+```{bash}
+cal
+```
+
+`cal` prints current date (in the month calendar).
+
+```{bash}
+cal 2021
+```
+
+`cal 2021` prints the calendar of year 2021.
+
+```{bash}
+cal 9 1752
+```
+
+`cal 9 1752` is supposed to print the calendar of September 1752. A few days were missing in the calendar. It's may be a result of [Gregorian Calendar Reformation]{https://en.wikipedia.org/wiki/Gregorian_calendar} as documented in `man cal`.
+
+```{bash}
+date
+```
+
+`date` command displays current date and time.
+
+```{bash}
+hostname
+```
+
+`hostname` command prints the name of the current host systeml; here it gives the name of the server.
+
+```{bash}
+arch
+```
+
+`arch` command with no arguments displays the architecture type of current machine.
+
+```{bash}
+uname -a
+```
+
+`uname` command displays system information, the flag `-a` asks it to play all information.
+
+```{bash}
+uptime
+```
+
+`uptime` command displays how long the system has been running.
+
+```{bash}
+who am i
+```
+
+`who am i` is supposed to return the invoker's real user name.
+
+```{bash}
+who
+```
+
+`who` command displays who is logged in.
+
+```{bash}
+w
+```
+
+`w` command shows who is logged on and what they are doing.
+
+```{bash}
+id
+```
+
+`id`: displays the user's identity, including the user and group names and numeric IDs.
+
+```{bash}
+last | head
+``` 
+
+`last` command displays the list of last logged in user, piping this command to `head` will display last 10 logged in users.        
+
+```{bash}
+echo {con,pre}{sent,fer}{s,ed}
+```
+
+This command prints all combinations of these groups of strings (each time pick one element from each group and combine them together).
+
+```{bash}
+time sleep 5
+```
+
+`sleep 5` command pauses the system for 5 seconds. `time` displays the time used to execute the following command.
+
+```{bash}
+history | tail
+```
+
+`history` command displays all the commands executed. Piping this command to `tail` will display the last 10 commands excuted in shell.
