@@ -91,7 +91,7 @@ If the above links do not work, please copy and paste the following links into y
 
     Display the first 10 rows:
     ```{bash}
-    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk '(NR <= 10)'
+    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | head
     ```
 
     Display the number of rows in the file:
@@ -101,7 +101,8 @@ If the above links do not work, please copy and paste the following links into y
 
     Display the number of unique patients:
     ```{bash}
-    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $1 }' | sort | uniq | wc -l
+    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz |\
+      awk -F, '{if (NR > 1) print $1 }' | sort | uniq | wc -l
     ```
 
 6. What are the possible values taken by each of the variable `admission_type`, `admission_location`, `insurance`, and `ethnicity`? Also report the count for each unique value of these variables. (Hint: combine Linux commands `zcat`, `head`/`tail`, `awk`, `uniq -c`, `wc`, and so on.)
@@ -109,38 +110,46 @@ If the above links do not work, please copy and paste the following links into y
     **Answer:**
     For `admission_type`: there are 9 different possible values, and the counts for each unique values are shown below.
     ```{bash}
-    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $6 }' | sort | uniq | wc -l
+    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz |\
+      awk -F, '{if (NR > 1) print $6 }' | sort | uniq | wc -l
     ```
 
     ```{bash}
-    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $6 }' | sort | uniq -c
+    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz |\
+      awk -F, '{if (NR > 1) print $6 }' | sort | uniq -c
     ```
 
     For `admission_location`: there are 12 different possible values (including blank/missing), and the counts for each unique values are shown below.
     ```{bash}
-    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $7 }' | sort | uniq | wc -l
+    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz |\
+      awk -F, '{if (NR > 1) print $7 }' | sort | uniq | wc -l
     ```
     
     ```{bash}
-    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $7 }' | sort | uniq -c
+    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz |\
+      awk -F, '{if (NR > 1) print $7 }' | sort | uniq -c
     ```
 
     For `insurance`: there are 3 different possible values, and the counts for each unique values are shown below.
     ```{bash}
-    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $9 }' | sort | uniq | wc -l
+    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz |\
+      awk -F, '{if (NR > 1) print $9 }' | sort | uniq | wc -l
     ```
     
     ```{bash}
-    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $9 }' | sort | uniq -c
+    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz |\
+      awk -F, '{if (NR > 1) print $9 }' | sort | uniq -c
     ```
 
     For `ethnicity`: there are 8 different possible values, and the counts for each unique values are shown below.
     ```{bash}
-    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $12 }' | sort | uniq | wc -l
+    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz |\
+      awk -F, '{if (NR > 1) print $12 }' | sort | uniq | wc -l
     ```
     
     ```{bash}
-    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, '{if (NR > 1) print $12 }' | sort | uniq -c
+    zcat /mnt/mimiciv/1.0/core/admissions.csv.gz |\
+      awk -F, '{if (NR > 1) print $12 }' | sort | uniq -c
     ```
 
 ## Q4. Who's popular in Price and Prejudice
@@ -181,7 +190,7 @@ Explain what `wget -nc` does. Do **not** put this text file `pg42671.txt` in Git
     head -n "$2" "$1" | tail -n "$3"
     ```
 Using `chmod` make the file executable by the owner, and run 
-    ```{bash eval=FALSE}
+    ```{bash eval=TRUE}
     ./middle.sh pg42671.txt 20 5
     ```
 Explain the output. Explain the meaning of `"$1"`, `"$2"`, and `"$3"` in this shell script. Why do we need the first line of the shell script?
@@ -244,7 +253,7 @@ uptime
 who am i
 ```
 
-`who am i` is supposed to return the invoker's real user name.
+`who am i` is supposed to return the invoker's real user name. While in the homework html file, it may not show the result because RStudio calls a special bash process which doesn't have a user name.
 
 ```{bash}
 who
@@ -286,4 +295,4 @@ time sleep 5
 history | tail
 ```
 
-`history` command displays all the commands executed. Piping this command to `tail` will display the last 10 commands excuted in shell.
+`history` command is supposed to display all the commands executed. Piping this command to `tail` will display the last 10 commands excuted in shell. While here in the homework html file, the history may not display, my guess is that when knitting a RMD file, a special bash process was called and thus cannot display the history.

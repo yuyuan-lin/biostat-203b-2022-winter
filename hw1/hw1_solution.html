@@ -288,7 +288,7 @@ pre code {
 <li><p>Display the first few lines of <code>admissions.csv.gz</code>. How many rows are in this data file? How many unique patients (identified by <code>subject_id</code>) are in this data file? (Hint: combine Linux commands <code>zcat</code>, <code>head</code>/<code>tail</code>, <code>awk</code>, <code>sort</code>, <code>uniq</code>, <code>wc</code>, and so on.)</p>
 <p><strong>Answer:</strong></p>
 <p>Display the first 10 rows:</p>
-<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk &#39;(NR &lt;= 10)&#39;</code></pre>
+<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | head</code></pre>
 <pre><code>## subject_id,hadm_id,admittime,dischtime,deathtime,admission_type,admission_location,discharge_location,insurance,language,marital_status,ethnicity,edregtime,edouttime,hospital_expire_flag
 ## 14679932,21038362,2139-09-26 14:16:00,2139-09-28 11:30:00,,ELECTIVE,,HOME,Other,ENGLISH,SINGLE,UNKNOWN,,,0
 ## 15585972,24941086,2123-10-07 23:56:00,2123-10-12 11:22:00,,ELECTIVE,,HOME,Other,ENGLISH,,WHITE,,,0
@@ -303,13 +303,16 @@ pre code {
 <pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | wc -l</code></pre>
 <pre><code>## 523741</code></pre>
 <p>Display the number of unique patients:</p>
-<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, &#39;{if (NR &gt; 1) print $1 }&#39; | sort | uniq | wc -l</code></pre>
+<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz |\
+  awk -F, &#39;{if (NR &gt; 1) print $1 }&#39; | sort | uniq | wc -l</code></pre>
 <pre><code>## 256878</code></pre></li>
 <li><p>What are the possible values taken by each of the variable <code>admission_type</code>, <code>admission_location</code>, <code>insurance</code>, and <code>ethnicity</code>? Also report the count for each unique value of these variables. (Hint: combine Linux commands <code>zcat</code>, <code>head</code>/<code>tail</code>, <code>awk</code>, <code>uniq -c</code>, <code>wc</code>, and so on.)</p>
 <p><strong>Answer:</strong> For <code>admission_type</code>: there are 9 different possible values, and the counts for each unique values are shown below.</p>
-<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, &#39;{if (NR &gt; 1) print $6 }&#39; | sort | uniq | wc -l</code></pre>
+<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz |\
+  awk -F, &#39;{if (NR &gt; 1) print $6 }&#39; | sort | uniq | wc -l</code></pre>
 <pre><code>## 9</code></pre>
-<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, &#39;{if (NR &gt; 1) print $6 }&#39; | sort | uniq -c</code></pre>
+<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz |\
+  awk -F, &#39;{if (NR &gt; 1) print $6 }&#39; | sort | uniq -c</code></pre>
 <pre><code>##    7254 AMBULATORY OBSERVATION
 ##   21581 DIRECT EMER.
 ##   19991 DIRECT OBSERVATION
@@ -320,9 +323,11 @@ pre code {
 ##   41074 SURGICAL SAME DAY ADMISSION
 ##   47930 URGENT</code></pre>
 <p>For <code>admission_location</code>: there are 12 different possible values (including blank/missing), and the counts for each unique values are shown below.</p>
-<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, &#39;{if (NR &gt; 1) print $7 }&#39; | sort | uniq | wc -l</code></pre>
+<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz |\
+  awk -F, &#39;{if (NR &gt; 1) print $7 }&#39; | sort | uniq | wc -l</code></pre>
 <pre><code>## 12</code></pre>
-<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, &#39;{if (NR &gt; 1) print $7 }&#39; | sort | uniq -c</code></pre>
+<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz |\
+  awk -F, &#39;{if (NR &gt; 1) print $7 }&#39; | sort | uniq -c</code></pre>
 <pre><code>##   60435 
 ##     191 AMBULATORY SURGERY TRANSFER
 ##   10670 CLINIC REFERRAL
@@ -336,16 +341,20 @@ pre code {
 ##    4063 TRANSFER FROM SKILLED NURSING FACILITY
 ##   16660 WALK-IN/SELF REFERRAL</code></pre>
 <p>For <code>insurance</code>: there are 3 different possible values, and the counts for each unique values are shown below.</p>
-<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, &#39;{if (NR &gt; 1) print $9 }&#39; | sort | uniq | wc -l</code></pre>
+<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz |\
+  awk -F, &#39;{if (NR &gt; 1) print $9 }&#39; | sort | uniq | wc -l</code></pre>
 <pre><code>## 3</code></pre>
-<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, &#39;{if (NR &gt; 1) print $9 }&#39; | sort | uniq -c</code></pre>
+<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz |\
+  awk -F, &#39;{if (NR &gt; 1) print $9 }&#39; | sort | uniq -c</code></pre>
 <pre><code>##   50850 Medicaid
 ##  171360 Medicare
 ##  301530 Other</code></pre>
 <p>For <code>ethnicity</code>: there are 8 different possible values, and the counts for each unique values are shown below.</p>
-<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, &#39;{if (NR &gt; 1) print $12 }&#39; | sort | uniq | wc -l</code></pre>
+<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz |\
+  awk -F, &#39;{if (NR &gt; 1) print $12 }&#39; | sort | uniq | wc -l</code></pre>
 <pre><code>## 8</code></pre>
-<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz | awk -F, &#39;{if (NR &gt; 1) print $12 }&#39; | sort | uniq -c</code></pre>
+<pre class="bash"><code>zcat /mnt/mimiciv/1.0/core/admissions.csv.gz |\
+  awk -F, &#39;{if (NR &gt; 1) print $12 }&#39; | sort | uniq -c</code></pre>
 <pre><code>##    1535 AMERICAN INDIAN/ALASKA NATIVE
 ##   24506 ASIAN
 ##   80293 BLACK/AFRICAN AMERICAN
@@ -389,6 +398,11 @@ done</code></pre>
 head -n &quot;$2&quot; &quot;$1&quot; | tail -n &quot;$3&quot;</code></pre>
 <p>Using <code>chmod</code> make the file executable by the owner, and run</p>
 <pre class="bash"><code>./middle.sh pg42671.txt 20 5</code></pre>
+<pre><code>## 
+## Author: Jane Austen
+## 
+## Editor: R. W. (Robert William) Chapman
+## </code></pre>
 <p>Explain the output. Explain the meaning of <code>&quot;$1&quot;</code>, <code>&quot;$2&quot;</code>, and <code>&quot;$3&quot;</code> in this shell script. Why do we need the first line of the shell script?</p>
 <p><strong>Answer:</strong> The output shows the 16th to 20th lines of <em>Pride and Prejudice</em>, which include the author and editor of the book. The <code>$1</code>, <code>$2</code> and <code>$3</code> refer to the first, second and third parameters passed to the <code>sh</code> script, which in this case, is <code>pg42671.txt</code>, <code>20</code> and <code>5</code>. The first line of the script tells the OS to invoke the specified shell to execute the commands following (which is <code>sh</code> here).</p></li>
 </ol>
@@ -449,7 +463,7 @@ head -n &quot;$2&quot; &quot;$1&quot; | tail -n &quot;$3&quot;</code></pre>
 ## 24 25 26 27 28 29 30</code></pre>
 <p><code>cal 9 1752</code> is supposed to print the calendar of September 1752. A few days were missing in the calendar. It’s may be a result of [Gregorian Calendar Reformation]{<a href="https://en.wikipedia.org/wiki/Gregorian_calendar" class="uri">https://en.wikipedia.org/wiki/Gregorian_calendar</a>} as documented in <code>man cal</code>.</p>
 <pre class="bash"><code>date</code></pre>
-<pre><code>## Thu Jan 20 05:44:30 UTC 2022</code></pre>
+<pre><code>## Fri Jan 21 03:34:40 UTC 2022</code></pre>
 <p><code>date</code> command displays current date and time.</p>
 <pre class="bash"><code>hostname</code></pre>
 <pre><code>## biostat-203b-teaching-server</code></pre>
@@ -461,36 +475,36 @@ head -n &quot;$2&quot; &quot;$1&quot; | tail -n &quot;$3&quot;</code></pre>
 <pre><code>## Linux biostat-203b-teaching-server 3.10.0-1160.49.1.el7.x86_64 #1 SMP Tue Nov 30 15:51:32 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux</code></pre>
 <p><code>uname</code> command displays system information, the flag <code>-a</code> asks it to play all information.</p>
 <pre class="bash"><code>uptime</code></pre>
-<pre><code>##  05:44:30 up 17 days,  5:18,  3 users,  load average: 0.41, 0.20, 0.16</code></pre>
+<pre><code>##  03:34:40 up 18 days,  3:08,  3 users,  load average: 0.47, 0.28, 0.25</code></pre>
 <p><code>uptime</code> command displays how long the system has been running.</p>
 <pre class="bash"><code>who am i</code></pre>
-<p><code>who am i</code> is supposed to return the invoker’s real user name.</p>
+<p><code>who am i</code> is supposed to return the invoker’s real user name. While in the homework html file, it may not show the result because RStudio calls a special bash process which doesn’t have a user name.</p>
 <pre class="bash"><code>who</code></pre>
 <pre><code>## tomokiokuno0528 pts/1        2022-01-11 01:13 (42.166.94.34.bc.googleusercontent.com)
 ## tomokiokuno0528 pts/3        2022-01-10 23:43 (42.166.94.34.bc.googleusercontent.com)
 ## maschepps pts/6        2022-01-17 19:33 (74.213.228.243)</code></pre>
 <p><code>who</code> command displays who is logged in.</p>
 <pre class="bash"><code>w</code></pre>
-<pre><code>##  05:44:30 up 17 days,  5:18,  3 users,  load average: 0.41, 0.20, 0.16
+<pre><code>##  03:34:40 up 18 days,  3:08,  3 users,  load average: 0.47, 0.28, 0.25
 ## USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
-## tomokiok pts/1    42.166.94.34.bc. 11Jan22  9days  0.01s  0.01s -bash
-## tomokiok pts/3    42.166.94.34.bc. 10Jan22  9days  1.03s  0.85s ssh -i /home/tomokiokuno0528/.ssh/id_rsa tomokiokuno0528@server.ucla-biostat-203b.com
-## maschepp pts/6    74.213.228.243   Mon19    2days  0.03s  0.03s -bash</code></pre>
+## tomokiok pts/1    42.166.94.34.bc. 11Jan22 10days  0.01s  0.01s -bash
+## tomokiok pts/3    42.166.94.34.bc. 10Jan22 10days  1.12s  0.94s ssh -i /home/tomokiokuno0528/.ssh/id_rsa tomokiokuno0528@server.ucla-biostat-203b.com
+## maschepp pts/6    74.213.228.243   Mon19    3days  0.03s  0.03s -bash</code></pre>
 <p><code>w</code> command shows who is logged on and what they are doing.</p>
 <pre class="bash"><code>id</code></pre>
 <pre><code>## uid=1022(yuyuanlin) gid=1024(yuyuanlin) groups=1024(yuyuanlin) context=system_u:system_r:initrc_t:s0</code></pre>
 <p><code>id</code>: displays the user’s identity, including the user and group names and numeric IDs.</p>
 <pre class="bash"><code>last | head</code></pre>
-<pre><code>## jiahaoti pts/14       104-54-32-28.lig Thu Jan 20 02:14 - 04:59  (02:44)    
-## huazhou  pts/30       149.142.103.91   Wed Jan 19 02:23 - 02:32  (00:09)    
-## lillyhua pts/20       64.201.127.119   Wed Jan 19 01:13 - 03:56  (02:43)    
-## lillyhua pts/20       64.201.127.119   Wed Jan 19 01:10 - 01:12  (00:01)    
-## lillyhua pts/20       64.201.127.119   Wed Jan 19 00:24 - 01:10  (00:46)    
-## sharonfe pts/19       38.15.211.52     Wed Jan 19 00:20 - 00:52  (00:31)    
-## yuyuanli pts/18       149.142.103.176  Wed Jan 19 00:20 - 02:01  (01:41)    
-## inclassd pts/17       149.142.103.176  Wed Jan 19 00:20 - 02:32  (02:11)    
-## jiahaoti pts/16       104-54-32-28.lig Wed Jan 19 00:20 - 02:00  (01:40)    
-## lillyhua pts/14       64.201.127.119   Wed Jan 19 00:10 - 00:11  (00:00)</code></pre>
+<pre><code>## yuyuanli pts/30       149.142.103.176  Fri Jan 21 01:13 - 01:14  (00:00)    
+## huazhou  pts/7        108-64-58-205.li Fri Jan 21 01:03 - 01:52  (00:48)    
+## ritazxca pts/26       42.166.94.34.bc. Fri Jan 21 00:43 - 02:16  (01:33)    
+## ritazxca pts/24       42.166.94.34.bc. Fri Jan 21 00:32 - 02:16  (01:43)    
+## ritazxca pts/23       42.166.94.34.bc. Fri Jan 21 00:31 - 02:16  (01:44)    
+## ritazxca pts/21       42.166.94.34.bc. Fri Jan 21 00:31 - 02:16  (01:44)    
+## ritazxca pts/13       cpe-172-91-65-26 Fri Jan 21 00:30 - 02:16  (01:45)    
+## ritazxca pts/23       42.166.94.34.bc. Fri Jan 21 00:28 - 00:29  (00:00)    
+## ritazxca pts/21       42.166.94.34.bc. Fri Jan 21 00:27 - 00:29  (00:01)    
+## ritazxca pts/13       cpe-172-91-65-26 Fri Jan 21 00:26 - 00:29  (00:02)</code></pre>
 <p><code>last</code> command displays the list of last logged in user, piping this command to <code>head</code> will display last 10 logged in users.</p>
 <pre class="bash"><code>echo {con,pre}{sent,fer}{s,ed}</code></pre>
 <pre><code>## consents consented confers confered presents presented prefers prefered</code></pre>
@@ -502,7 +516,7 @@ head -n &quot;$2&quot; &quot;$1&quot; | tail -n &quot;$3&quot;</code></pre>
 ## sys  0m0.001s</code></pre>
 <p><code>sleep 5</code> command pauses the system for 5 seconds. <code>time</code> displays the time used to execute the following command.</p>
 <pre class="bash"><code>history | tail</code></pre>
-<p><code>history</code> command displays all the commands executed. Piping this command to <code>tail</code> will display the last 10 commands excuted in shell.</p>
+<p><code>history</code> command is supposed to display all the commands executed. Piping this command to <code>tail</code> will display the last 10 commands excuted in shell. While here in the homework html file, the history may not display, my guess is that when knitting a RMD file, a special bash process was called and thus cannot display the history.</p>
 </div>
 </div>
 
