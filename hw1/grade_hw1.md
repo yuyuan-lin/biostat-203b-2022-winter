@@ -1,6 +1,6 @@
 *Yuyuan Lin*
 
-### Overall Grade: 117.5/120
+### Overall Grade: 120/120
 
 ### Quality of report: 10/10
 
@@ -22,9 +22,7 @@
 
 	If CITI training is not completed successfully, take 15 points off. PhysioNet crecential might take longer.
 
-- Q3 (17.5/20)
-
-	  Did not remove the header when counting the number of rows. `-2.5`.
+- Q3 (20/20)
 
 - Q4 (10/10)
 
