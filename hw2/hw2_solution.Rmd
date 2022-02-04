@@ -79,9 +79,29 @@ system(
 
 1. Import `icustatys.csv.gz` as a tibble `icustays_tble`. 
 
+```{r}
+icustays_tble <- read_csv(str_c(mimic_path, "/icu/icustays.csv.gz"),
+                          show_col_types = FALSE)
+```
+
 2. How many unique `subject_id`? Can a `subject_id` have multiple ICU stays? 
 
+```{r}
+length(unique(icustays_tble$subject_id))
+nrow(icustays_tble)
+```
+
+<p style="color:DarkRed;">**Answer:** There were 53150 unique `subject_id`s, one `subject_id` can have more than one ICU stays since the total number of records is 76540 (greater than 53150). </p>
+
 3. For each `subject_id`, let's only keep the first ICU stay in the tibble `icustays_tble`.
+
+```{r}
+icustays_tble <- icustays_tble %>%
+  arrange(subject_id, intime) %>%
+  filter(!duplicated(subject_id))
+
+nrow(icustays_tble)
+```
 
 ## Q3. `admission` data
 
@@ -99,15 +119,80 @@ system(
 
 1. Import `admissions.csv.gz` as a tibble `admissions_tble`.
 
+```{r}
+admissions_tble <- read_csv(str_c(mimic_path, "/core/admissions.csv.gz"),
+                            show_col_types = FALSE)
+```
+
 2. Let's only keep the admissions that have a match in `icustays_tble` according to `subject_id` and `hadmi_id`.
+
+```{r}
+admissions_tble <- admissions_tble %>%
+  filter(subject_id %in% icustays_tble$subject_id) %>%
+  filter(hadm_id %in% icustays_tble$hadm_id)
+```
 
 3. Summarize the following variables by graphics. 
 
 - admission year  
+
+```{r}
+admissions_tble %>%
+  mutate(Year = year(admittime)) %>%
+  ggplot(mapping = aes(x = Year)) + 
+  theme_bw() +
+  geom_freqpoly(bins = 102) + # there were 102 years in the data set
+  labs(title = "Figure 1. Numbers of admissions for each year")
+```
+
 - admission month  
+
+```{r}
+admissions_tble %>%
+  mutate(Month = month(admittime, label = TRUE)) %>%
+  ggplot(mapping = aes(x = Month)) + 
+  theme_bw() +
+  geom_bar() + 
+  labs(title = "Figure 2. Numbers of admissions for each month")
+```
+
 - admission month day  
+
+```{r}
+admissions_tble %>%
+  mutate(month_day = mday(admittime)) %>%
+  ggplot(mapping = aes(x = month_day)) + 
+  theme_bw() +
+  geom_bar() + 
+  labs(title = "Figure 3. Numbers of admissions for each month day",
+       x = "Month Day") 
+```
+
 - admission week day  
+
+```{r}
+admissions_tble %>%
+  mutate(week_day = wday(admittime, label = TRUE)) %>%
+  ggplot(mapping = aes(x = week_day)) + 
+  theme_bw() +
+  geom_bar() + 
+  labs(title = "Figure 4. Numbers of admissions for each week day",
+       x = "Week Day") 
+```
+
 - admission hour (anything unusual?)  
+
+```{r}
+admissions_tble %>%
+  mutate(Hour = hour(admittime)) %>%
+  ggplot(mapping = aes(x = Hour)) + 
+  theme_bw() +
+  geom_bar() + 
+  labs(title = "Figure 4. Numbers of admissions for each hour",
+       x = "Hour") 
+```
+
+<p style="color:DarkRed;">**Answer:** The admission pattern by hour shows two "unusual" peaks: one at 7 am, another at 12 am. My guess is that 7 am is the opening time for most hospitals. It's still abnormal that 12 am at midnight has the greatest admission number. </p>
 
 ## Q4. `patients` data
 
@@ -125,7 +210,37 @@ system(
 
 1. Import `patients.csv.gz` (<https://mimic.mit.edu/docs/iv/modules/core/patients/>) as a tibble `patients_tble` and only keep the patients who have a match in `icustays_tble` (according to `subject_id`).
 
+```{r}
+patients_tble <- read_csv(str_c(mimic_path, "/core/patients.csv.gz"),
+                          show_col_types = FALSE) %>%
+  filter(subject_id %in% icustays_tble$subject_id)
+```
+
 2. Summarize variables `gender` and `anchor_age`, and explain any patterns you see.
+
+```{r}
+patients_tble %>%
+  ggplot(mapping = aes(x = gender)) +
+  geom_bar() +
+  labs(title = "Figure 5. Patient number by gender")
+```
+
+```{r}
+patients_tble %>%
+  ggplot(mapping = aes(x = anchor_age)) +
+  geom_density(fill = "light blue") +
+  labs(title = "Figure 6. Density plot of anchor age")
+```
+
+```{r}
+patients_tble %>%
+  ggplot(mapping = aes(x = anchor_age, group = gender)) +
+  geom_density(aes(fill = gender), alpha = 0.4) +
+  labs(title = "Figure 6. Density plot of anchor age by gender")
+```
+
+<p style="color:DarkRed;">**Answer:** There are more male patients admitted to ICU than female patients. Most patients admitted to ICU aged between 40 to 80-year-old. The peak of age distribution is around 65-70-year-old. Male patients seem to have a slightly younger age distribution compared to females. </p>
+
 
 ## Q5. Lab results
 
@@ -154,9 +269,20 @@ system(
 
 1. Find how many rows are in `labevents.csv.gz`.
 
+```{bash, eval = FALSE}
+zcat /mnt/mimiciv/1.0/hosp/labevents.csv.gz | wc -l
+```
+
+<p style="color:DarkRed;">**Answer:**There are 8398756 rows in the compressed `labevents.csv.gz`. Note: this number is the count of rows in the compressed data instead of original data, so it does not stand for the number of records. </p>
+
 2. We are interested in the lab measurements of creatinine (50912), potassium (50971), sodium (50983), chloride (50902), bicarbonate (50882), hematocrit (51221), white blood cell count (51301), glucose (50931), magnesium (50960), and calcium (50893). Retrieve a subset of `labevents.csv.gz` only containing these items for the patients in `icustays_tble` as a tibble `labevents_tble`. 
 
     Hint: `labevents.csv.gz` is a data file too big to be read in by the `read_csv` function in its default setting. Utilize the `col_select` and `lazy` options in the `read_csv` function to reduce the memory burden.
+    
+```{r}
+labevents_tble <- read_csv
+```
+
 
 3. Further restrict `labevents_tble` to the first lab measurement during the ICU stay. 
 4. Summarize the lab measurements by appropriate numerics and graphics. 
