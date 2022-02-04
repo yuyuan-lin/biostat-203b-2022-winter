@@ -18,6 +18,7 @@ knitr::opts_chunk$set(echo = TRUE, cache = TRUE, cache.lazy = FALSE)
 library(tidyverse)
 library(data.table)
 library(lubridate)
+library(gridExtra)
 ```
 
 ```{r}
@@ -25,15 +26,19 @@ os <- sessionInfo()$running
 if (str_detect(os, "Linux")) {
   mimic_path <- "/mnt/mimiciv/1.0"
 } else if (str_detect(os, "macOS")) {
-  mimic_path <- "/Users/huazhou/Documents/Box Sync/MIMIC/mimic-iv-1.0"
+  mimic_path <- "/Users/yuyuanlin/Data/mimiciv/1.0"
 }
 ```
 
 In this exercise, we use tidyverse (ggpot2, dplyr, etc) to explore the [MIMIC-IV](https://mimic.mit.edu/docs/iv/) data introduced in [homework 1](https://ucla-biostat-203b.github.io/2022winter/hw/hw1/hw1.html) and to build a cohort of ICU stays.
 
 ```{r}
-# tree -s -L 2 /Users/huazhou/Documents/Box\ Sync/MIMIC/mimic-iv-1.0
-system(str_c("tree -s -L 2 ", shQuote(mimic_path)), intern = TRUE)
+if (str_detect(os, "Linux")) {
+  system(str_c("tree -s -L 2 ", shQuote(mimic_path)), intern = TRUE)
+} else if (str_detect(os, "macOS")) {
+  system("/opt/homebrew/bin/tree /Users/yuyuanlin/Data/mimiciv/1.0", 
+         intern = TRUE)
+}
 ```
 
 ## Q1. `read.csv` (base R) vs `read_csv` (tidyverse) vs `fread` (data.table)
@@ -140,7 +145,7 @@ admissions_tble <- admissions_tble %>%
 admissions_tble %>%
   mutate(Year = year(admittime)) %>%
   ggplot(mapping = aes(x = Year)) + 
-  theme_bw() +
+  theme_classic() +
   geom_freqpoly(bins = 102) + # there were 102 years in the data set
   labs(title = "Figure 1. Numbers of admissions for each year")
 ```
@@ -151,7 +156,7 @@ admissions_tble %>%
 admissions_tble %>%
   mutate(Month = month(admittime, label = TRUE)) %>%
   ggplot(mapping = aes(x = Month)) + 
-  theme_bw() +
+  theme_classic() +
   geom_bar() + 
   labs(title = "Figure 2. Numbers of admissions for each month")
 ```
@@ -162,7 +167,7 @@ admissions_tble %>%
 admissions_tble %>%
   mutate(month_day = mday(admittime)) %>%
   ggplot(mapping = aes(x = month_day)) + 
-  theme_bw() +
+  theme_classic() +
   geom_bar() + 
   labs(title = "Figure 3. Numbers of admissions for each month day",
        x = "Month Day") 
@@ -174,7 +179,7 @@ admissions_tble %>%
 admissions_tble %>%
   mutate(week_day = wday(admittime, label = TRUE)) %>%
   ggplot(mapping = aes(x = week_day)) + 
-  theme_bw() +
+  theme_classic() +
   geom_bar() + 
   labs(title = "Figure 4. Numbers of admissions for each week day",
        x = "Week Day") 
@@ -188,7 +193,7 @@ admissions_tble %>%
   ggplot(mapping = aes(x = Hour)) + 
   theme_bw() +
   geom_bar() + 
-  labs(title = "Figure 4. Numbers of admissions for each hour",
+  labs(title = "Figure 5. Numbers of admissions for each hour",
        x = "Hour") 
 ```
 
@@ -222,21 +227,24 @@ patients_tble <- read_csv(str_c(mimic_path, "/core/patients.csv.gz"),
 patients_tble %>%
   ggplot(mapping = aes(x = gender)) +
   geom_bar() +
-  labs(title = "Figure 5. Patient number by gender")
+  theme_classic() +
+  labs(title = "Figure 6. Patient number by gender")
 ```
 
 ```{r}
 patients_tble %>%
   ggplot(mapping = aes(x = anchor_age)) +
   geom_density(fill = "light blue") +
-  labs(title = "Figure 6. Density plot of anchor age")
+  theme_classic() + 
+  labs(title = "Figure 7. Density plot of anchor age")
 ```
 
 ```{r}
 patients_tble %>%
   ggplot(mapping = aes(x = anchor_age, group = gender)) +
   geom_density(aes(fill = gender), alpha = 0.4) +
-  labs(title = "Figure 6. Density plot of anchor age by gender")
+  theme_classic() +
+  labs(title = "Figure 8. Density plot of anchor age by gender")
 ```
 
 <p style="color:DarkRed;">**Answer:** There are more male patients admitted to ICU than female patients. Most patients admitted to ICU aged between 40 to 80-year-old. The peak of age distribution is around 65-70-year-old. Male patients seem to have a slightly younger age distribution compared to females. </p>
@@ -269,23 +277,97 @@ system(
 
 1. Find how many rows are in `labevents.csv.gz`.
 
-```{bash, eval = FALSE}
-zcat /mnt/mimiciv/1.0/hosp/labevents.csv.gz | wc -l
+```{r}
+# zcat < /mnt/mimiciv/1.0/hosp/labevents.csv.gz | wc -l
+system(str_c("zcat < ", shQuote(mimic_path), "/hosp/labevents.csv.gz | wc -l"), 
+       intern = TRUE)
 ```
 
-<p style="color:DarkRed;">**Answer:**There are 8398756 rows in the compressed `labevents.csv.gz`. Note: this number is the count of rows in the compressed data instead of original data, so it does not stand for the number of records. </p>
+<p style="color:DarkRed;">**Answer:**There are 122,103,668 rows in the `labevents.csv.gz` (after decompression). </p>
 
 2. We are interested in the lab measurements of creatinine (50912), potassium (50971), sodium (50983), chloride (50902), bicarbonate (50882), hematocrit (51221), white blood cell count (51301), glucose (50931), magnesium (50960), and calcium (50893). Retrieve a subset of `labevents.csv.gz` only containing these items for the patients in `icustays_tble` as a tibble `labevents_tble`. 
 
     Hint: `labevents.csv.gz` is a data file too big to be read in by the `read_csv` function in its default setting. Utilize the `col_select` and `lazy` options in the `read_csv` function to reduce the memory burden.
     
 ```{r}
-labevents_tble <- read_csv
+labevents_tble <- read_csv(str_c(mimic_path,
+                                 "/hosp/labevents_filtered_itemid.csv.gz"),
+                           col_select = c(subject_id, itemid, 
+                                          charttime, valuenum),
+                           col_types = cols_only(subject_id = col_double(),
+                                                 itemid = col_double(),
+                                                 charttime = col_datetime(),
+                                                 valuenum = col_double()),
+                           lazy = TRUE) %>%
+  filter(itemid %in% c(50912, 50971, 50983, 50902, 50882, 
+                       51221, 51301, 50931, 50960, 50893), 
+         subject_id %in% icustays_tble$subject_id)
 ```
 
 
 3. Further restrict `labevents_tble` to the first lab measurement during the ICU stay. 
+
+```{r}
+labevents_tble <- labevents_tble %>% 
+  arrange(charttime) %>% 
+  distinct(subject_id, itemid, .keep_all = TRUE)
+```
+
 4. Summarize the lab measurements by appropriate numerics and graphics. 
+
+```{r}
+labevents_sum <- labevents_tble %>% 
+  group_by(itemid) %>%
+  summarize(
+    n = n(),
+    mean = mean(valuenum, na.rm = TRUE),
+    sd = sd(valuenum, na.rm = TRUE),
+    median = median(valuenum, na.rm = TRUE),
+    IQR = IQR(valuenum, na.rm = TRUE),
+    min = min(valuenum, na.rm = TRUE),
+    max = max(valuenum, na.rm = TRUE)
+  ) %>%
+  # the name of the items
+  mutate(item = recode(itemid, `50912` = "creatinine", `50971` = "potassium",
+                       `50983` = "sodium", `50902` = "chloride",
+                       `50882` = "bicarbonate", `51221` = "hematocrit",
+                       `51301` = "white blood cell count", `50931` = "glucose",
+                       `50960` = "magnesium", `50893` = "calcium")) %>%
+  # reorder the columns
+  select(itemid, item, n, mean, sd, median, IQR, min, max)
+
+knitr::kable(labevents_sum, caption = "Table 1. Summary of Lab events")
+```
+
+<p style="color:DarkRed;">**Answer:** Table 1 above shows the summary statistics for each lab items.</p>
+
+```{r, warning = FALSE}
+labevents_tble_p <- labevents_tble %>% 
+  mutate(item = recode(itemid, `50912` = "creatinine", `50971` = "potassium",
+                       `50983` = "sodium", `50902` = "chloride",
+                       `50882` = "bicarbonate", `51221` = "hematocrit",
+                       `51301` = "white blood cell count", `50931` = "glucose",
+                       `50960` = "magnesium", `50893` = "calcium"))
+
+plot <- list()
+k <- 1
+for (i in unique(labevents_tble_p$item)){
+  plot[[k]] <- labevents_tble_p %>% 
+    filter(item == i) %>%
+    ggplot(mapping = aes(x = valuenum)) +
+    geom_density() +
+    theme_classic() +
+    labs(x = i)
+  k <- k + 1
+}
+
+rm(labevents_tble_p)
+
+grid.arrange(grobs = plot, ncol = 2,
+             top = "Figure 9. Density plots for lab items")
+```
+
+<p style="color:DarkRed;">**Answer:** Figure 7 above shows the density plot for each lab item. </p>
 
 ## Q6. Vitals from charted events
 
@@ -312,9 +394,98 @@ system(
 
 1. We are interested in the vitals for ICU patients: heart rate (220045), mean non-invasive blood pressure (220181), systolic non-invasive blood pressure (220179), body temperature in Fahrenheit (223761), and respiratory rate (220210). Retrieve a subset of `chartevents.csv.gz` only containing these items for the patients in `icustays_tble` as a tibble `chartevents_tble`.
 
+```{r}
+chartevents_tble <- read_csv(str_c(mimic_path,
+                                   "/icu/chartevents_filtered_itemid.csv.gz"),
+                             lazy = TRUE) %>%
+  filter(itemid %in% c(220045, 220181, 220179, 223761, 220210), 
+         subject_id %in% icustays_tble$subject_id)
+```
+
 2. Further restrict `chartevents_tble` to the first vital measurement during the ICU stay. 
 
-3. Summarize these vital measurements by appropriate numerics and graphics. 
+```{r}
+chartevents_tble <- chartevents_tble %>%
+  arrange(charttime) %>%
+  distinct(subject_id, itemid, .keep_all = TRUE)
+```
+
+3. Summarize these vital measurements by appropriate numerics and graphics.
+
+```{r}
+chartevents_sum <- chartevents_tble %>% 
+  group_by(itemid) %>%
+  summarize(
+    n = n(),
+    mean = mean(valuenum, na.rm = TRUE),
+    sd = sd(valuenum, na.rm = TRUE),
+    median = median(valuenum, na.rm = TRUE),
+    IQR = IQR(valuenum, na.rm = TRUE),
+    min = min(valuenum, na.rm = TRUE),
+    max = max(valuenum, na.rm = TRUE)
+  ) %>%
+  # the name of the items
+  mutate(item = recode(itemid, 
+                       `220045` = "heart rate", 
+                       `220181` = "mean non-invasive BP", 
+                       `220179` = "systolic non-invasive BP",
+                       `223761` = "body temperature in F", 
+                       `220210` = "respiratory rate")) %>%
+  # reorder the columns
+  select(itemid, item, n, mean, sd, median, IQR, min, max)
+
+knitr::kable(chartevents_sum, 
+             caption = "Table 2. Summary of vital measurements")
+```
+
+<p style="color:DarkRed;">**Answer:** Table 2 above shows the summary statistics for each vital measurements.</p>
+
+```{r}
+chartevents_tble_p <- chartevents_tble %>% 
+  mutate(item = recode(itemid, 
+                       `220045` = "heart rate", 
+                       `220181` = "mean non-invasive BP", 
+                       `220179` = "systolic non-invasive BP",
+                       `223761` = "body temperature in F", 
+                       `220210` = "respiratory rate"))
+
+plot <- list()
+k <- 1
+for (i in unique(chartevents_tble_p$item)){
+  plot[[k]] <- chartevents_tble_p %>% 
+    filter(item == i) %>%
+    ggplot(mapping = aes(x = valuenum)) +
+    geom_density() +
+    theme_classic() +
+    labs(x = i)
+  k <- k + 1
+}
+
+grid.arrange(grobs = plot, ncol = 2,
+             top = "Figure 10. Density plots for vital measurements")
+```
+
+<p style="color:DarkRed;">**Answer:** Figure 8 above shows the density plot for each vital measurements. Noticed that for two blood pressure measurements, there are extreme outliers distorting the plot. So, I redraw these two plots with a x-axis limit as following: </p>
+
+```{r}
+plot <- list()
+k <- 1
+for (i in c("mean non-invasive BP", "systolic non-invasive BP")){
+  plot[[k]] <- chartevents_tble_p %>% 
+    filter(item == i) %>%
+    ggplot(mapping = aes(x = valuenum)) +
+    geom_density() +
+    theme_classic() +
+    labs(x = i) +
+    xlim(c(0, 300))
+  k <- k + 1
+}
+
+rm(chartevents_tble_p)
+
+grid.arrange(grobs = plot, ncol = 2,
+             top = "Figure 11. Density plots for Blood Pressure")
+```
 
 ## Q7. Putting things together
 
@@ -330,6 +501,10 @@ and columns contain at least following variables
 - first lab measurements during ICU stay  
 - first vital measurements during ICU stay
 - an indicator variable `thirty_day_mort` whether the patient died within 30 days of hospital admission (30 day mortality)
+
+```{r}
+
+```
 
 ## Q8. Exploratory data analysis (EDA)
 
