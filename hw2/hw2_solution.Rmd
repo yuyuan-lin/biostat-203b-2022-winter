@@ -503,7 +503,49 @@ and columns contain at least following variables
 - an indicator variable `thirty_day_mort` whether the patient died within 30 days of hospital admission (30 day mortality)
 
 ```{r}
+mimic_icu_cohort <- icustays_tble %>%
+  # merge admission table to icu table
+  left_join(admissions_tble, by = c("subject_id", "hadm_id")) %>%
+  # merge patient table to icu table
+  left_join(patients_tble, by = c("subject_id"))
 
+# transfrom labevent and chartevent table to wide format
+labevents_tble_w <- labevents_tble %>%
+  select(-c(charttime)) %>%
+  pivot_wider(id_cols = subject_id,
+              names_from = itemid,
+              names_prefix = "lab_",
+              values_from = valuenum)
+
+chartevents_tble_w <- chartevents_tble %>%
+  select(subject_id, itemid, valuenum) %>%
+  pivot_wider(id_cols = subject_id,
+              names_from = itemid,
+              names_prefix = "vital_",
+              values_from = valuenum)
+
+# merge lab and vital measurements to full dataset
+mimic_icu_cohort <- mimic_icu_cohort %>%
+  left_join(labevents_tble_w, by = c("subject_id")) %>%
+  left_join(chartevents_tble_w, by = c("subject_id"))
+
+# create indicator of survival within 30 days after admission
+mimic_icu_cohort <- mimic_icu_cohort %>%
+  mutate(
+    survival_days = as.numeric((dod - as.Date(admittime))),
+    thirty_day_mort = ifelse(is.na(survival_days), 0,
+                          ifelse(survival_days > 30, 0, 1))
+  )
+
+# print final tibble
+print(mimic_icu_cohort, width = Inf, n = 5)
+```
+
+<p style="color:DarkRed;">**Answer:** the table printed above is the final tibble. **Note:** for the 30 days mortality indicator, the date of death was determined by the variable `dod`, which include more patients' information than `deathtime`. </p>
+
+```{r}
+# remove the intermediate objects
+rm(list = setdiff(ls(), "mimic_icu_cohort"))
 ```
 
 ## Q8. Exploratory data analysis (EDA)
@@ -511,6 +553,10 @@ and columns contain at least following variables
 Summarize following information using appropriate numerics or graphs.
 
 - `thirty_day_mort` vs demographic variables (ethnicity, language, insurance, marital_status, gender, age at hospital admission)
+
+```{r}
+
+```
 
 - `thirty_day_mort` vs first lab measurements
 

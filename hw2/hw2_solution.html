@@ -959,6 +959,112 @@ grid.arrange(grobs = plot, ncol = 2,
 <li>first vital measurements during ICU stay</li>
 <li>an indicator variable <code>thirty_day_mort</code> whether the patient died within 30 days of hospital admission (30 day mortality)</li>
 </ul>
+<pre class="r"><code>mimic_icu_cohort &lt;- icustays_tble %&gt;%
+  # merge admission table to icu table
+  left_join(admissions_tble, by = c(&quot;subject_id&quot;, &quot;hadm_id&quot;)) %&gt;%
+  # merge patient table to icu table
+  left_join(patients_tble, by = c(&quot;subject_id&quot;))
+
+# transfrom labevent and chartevent table to wide format
+labevents_tble_w &lt;- labevents_tble %&gt;%
+  select(-c(charttime)) %&gt;%
+  pivot_wider(id_cols = subject_id,
+              names_from = itemid,
+              names_prefix = &quot;lab_&quot;,
+              values_from = valuenum)
+
+chartevents_tble_w &lt;- chartevents_tble %&gt;%
+  select(subject_id, itemid, valuenum) %&gt;%
+  pivot_wider(id_cols = subject_id,
+              names_from = itemid,
+              names_prefix = &quot;vital_&quot;,
+              values_from = valuenum)
+
+# merge lab and vital measurements to full dataset
+mimic_icu_cohort &lt;- mimic_icu_cohort %&gt;%
+  left_join(labevents_tble_w, by = c(&quot;subject_id&quot;)) %&gt;%
+  left_join(chartevents_tble_w, by = c(&quot;subject_id&quot;))
+
+# create indicator of survival within 30 days after admission
+mimic_icu_cohort &lt;- mimic_icu_cohort %&gt;%
+  mutate(
+    survival_days = as.numeric((dod - as.Date(admittime))),
+    thirty_day_mort = ifelse(is.na(survival_days), 0,
+                          ifelse(survival_days &gt; 30, 0, 1))
+  )
+
+# print final tibble
+print(mimic_icu_cohort, width = Inf, n = 5)</code></pre>
+<pre><code>## # A tibble: 53,150 × 43
+##   subject_id  hadm_id  stay_id first_careunit                                  
+##        &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;                                           
+## 1   10000032 29079034 39553978 Medical Intensive Care Unit (MICU)              
+## 2   10000980 26913865 39765666 Medical Intensive Care Unit (MICU)              
+## 3   10001217 24597018 37067082 Surgical Intensive Care Unit (SICU)             
+## 4   10001725 25563031 31205490 Medical/Surgical Intensive Care Unit (MICU/SICU)
+## 5   10001884 26184834 37510196 Medical Intensive Care Unit (MICU)              
+##   last_careunit                                    intime             
+##   &lt;chr&gt;                                            &lt;dttm&gt;             
+## 1 Medical Intensive Care Unit (MICU)               2180-07-23 14:00:00
+## 2 Medical Intensive Care Unit (MICU)               2189-06-27 08:42:00
+## 3 Surgical Intensive Care Unit (SICU)              2157-11-20 19:18:02
+## 4 Medical/Surgical Intensive Care Unit (MICU/SICU) 2110-04-11 15:52:22
+## 5 Medical Intensive Care Unit (MICU)               2131-01-11 04:20:05
+##   outtime               los admittime           dischtime          
+##   &lt;dttm&gt;              &lt;dbl&gt; &lt;dttm&gt;              &lt;dttm&gt;             
+## 1 2180-07-23 23:50:47 0.410 2180-07-23 12:35:00 2180-07-25 17:55:00
+## 2 2189-06-27 20:38:27 0.498 2189-06-27 07:38:00 2189-07-03 03:00:00
+## 3 2157-11-21 22:08:00 1.12  2157-11-18 22:56:00 2157-11-25 18:00:00
+## 4 2110-04-12 23:59:56 1.34  2110-04-11 15:08:00 2110-04-14 15:00:00
+## 5 2131-01-20 08:27:30 9.17  2131-01-07 20:39:00 2131-01-20 05:15:00
+##   deathtime           admission_type    admission_location discharge_location
+##   &lt;dttm&gt;              &lt;chr&gt;             &lt;chr&gt;              &lt;chr&gt;             
+## 1 NA                  EW EMER.          EMERGENCY ROOM     HOME              
+## 2 NA                  EW EMER.          EMERGENCY ROOM     HOME HEALTH CARE  
+## 3 NA                  EW EMER.          EMERGENCY ROOM     HOME HEALTH CARE  
+## 4 NA                  EW EMER.          PACU               HOME              
+## 5 2131-01-20 05:15:00 OBSERVATION ADMIT EMERGENCY ROOM     DIED              
+##   insurance language marital_status ethnicity              edregtime          
+##   &lt;chr&gt;     &lt;chr&gt;    &lt;chr&gt;          &lt;chr&gt;                  &lt;dttm&gt;             
+## 1 Medicaid  ENGLISH  WIDOWED        WHITE                  2180-07-23 05:54:00
+## 2 Medicare  ENGLISH  MARRIED        BLACK/AFRICAN AMERICAN 2189-06-27 06:25:00
+## 3 Other     ?        MARRIED        WHITE                  2157-11-18 17:38:00
+## 4 Other     ENGLISH  MARRIED        WHITE                  NA                 
+## 5 Medicare  ENGLISH  MARRIED        BLACK/AFRICAN AMERICAN 2131-01-07 13:36:00
+##   edouttime           hospital_expire_flag gender anchor_age anchor_year
+##   &lt;dttm&gt;                             &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt;       &lt;dbl&gt;
+## 1 2180-07-23 14:00:00                    0 F              52        2180
+## 2 2189-06-27 08:42:00                    0 F              73        2186
+## 3 2157-11-19 01:24:00                    0 F              55        2157
+## 4 NA                                     0 F              46        2110
+## 5 2131-01-07 22:13:00                    1 F              68        2122
+##   anchor_year_group dod        lab_51221 lab_51301 lab_50882 lab_50893 lab_50902
+##   &lt;chr&gt;             &lt;date&gt;         &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 2014 - 2016       NA              45.4       3          27       8.4       101
+## 2 2008 - 2010       NA              29.1       4.7        24      10         110
+## 3 2011 - 2013       NA              42.2      12.6        24       9.3       107
+## 4 2011 - 2013       NA              39.1      17          24       9.1        98
+## 5 2008 - 2010       2131-01-20      39.9       4.9        29       9.8        97
+##   lab_50912 lab_50931 lab_50960 lab_50971 lab_50983 vital_220045 vital_220210
+##       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;
+## 1       0.4        95       1.8       3.7       136           91           24
+## 2       2.2       153       2.3       5.1       142           77           23
+## 3       0.6        86       2.3       4.4       140           86           18
+## 4       0.8       146       1.5       4.1       139           55           19
+## 5       0.8       106       1.8       3.6       135           38           16
+##   vital_220179 vital_220181 vital_223761 survival_days thirty_day_mort
+##          &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt;
+## 1           84           56         98.7            NA               0
+## 2          150           92         98              NA               0
+## 3          151          104         98.5            NA               0
+## 4           73           59         97.7            NA               0
+## 5          180           46         98.1            13               1
+## # … with 53,145 more rows</code></pre>
+<p style="color:DarkRed;">
+<strong>Answer:</strong> the table printed above is the final tibble. <strong>Note:</strong> for the 30 days mortality indicator, the date of death was determined by the variable <code>dod</code>, which include more patients’ information than <code>deathtime</code>.
+</p>
+<pre class="r"><code># remove the intermediate objects
+rm(list = setdiff(ls(), &quot;mimic_icu_cohort&quot;))</code></pre>
 </div>
 <div id="q8.-exploratory-data-analysis-eda" class="section level2">
 <h2>Q8. Exploratory data analysis (EDA)</h2>
