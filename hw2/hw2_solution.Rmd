@@ -14,7 +14,8 @@ sessionInfo()
 ```
 
 ```{r setup, message=F}
-knitr::opts_chunk$set(echo = TRUE, cache = TRUE, cache.lazy = FALSE)
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE, cache.lazy = FALSE, 
+                      warning = FALSE, message = FALSE)
 library(tidyverse)
 library(data.table)
 library(lubridate)
@@ -555,12 +556,176 @@ Summarize following information using appropriate numerics or graphs.
 - `thirty_day_mort` vs demographic variables (ethnicity, language, insurance, marital_status, gender, age at hospital admission)
 
 ```{r}
+# ethnicity
+mimic_icu_cohort %>%
+  ggplot() +
+  geom_bar(mapping = aes(x = ethnicity, fill = as.factor(thirty_day_mort)),
+           position = "stack") +
+  coord_flip() +
+  theme_classic() +
+  labs(title = "Figure 12.a. Thirty-day mortality by races",
+       x = "Ethnicity",
+       y = "Count",
+       fill = "30 Days Mortality")
 
+# language
+mimic_icu_cohort %>%
+  mutate(language = recode(language, `?` = "Unknown")) %>%
+  ggplot() +
+  geom_bar(mapping = aes(x = language, fill = as.factor(thirty_day_mort)),
+           position = "dodge") +
+  theme_classic() +
+  labs(title = "Figure 12.b. Thirty-day mortality by Language",
+       x = "Language",
+       y = "Count",
+       fill = "30 Days Mortality")
+
+# insurance
+mimic_icu_cohort %>%
+  ggplot() +
+  geom_bar(mapping = aes(x = insurance, fill = as.factor(thirty_day_mort)),
+           position = "dodge") +
+  theme_classic() +
+  labs(title = "Figure 12.c. Thirty-day mortality by insurance type",
+       x = "Insurance Type",
+       y = "Count",
+       fill = "30 Days Mortality")
+
+# marital_status
+mimic_icu_cohort %>%
+  ggplot() +
+  geom_bar(mapping = aes(x = marital_status, fill = as.factor(thirty_day_mort)),
+           position = "dodge") +
+  theme_classic() +
+  labs(title = "Figure 12.d. Thirty-day mortality by marital status",
+       x = "Marital Status",
+       y = "Count",
+       fill = "30 Days Mortality")
+
+# gender
+mimic_icu_cohort %>%
+  ggplot() +
+  geom_bar(mapping = aes(x = gender, fill = as.factor(thirty_day_mort)),
+           position = "dodge") +
+  theme_classic() +
+  labs(title = "Figure 12.e. Thirty-day mortality by gender",
+       x = "Gender",
+       y = "Count",
+       fill = "30 Days Mortality")
+
+# age
+mimic_icu_cohort %>%
+  ggplot() +
+  geom_boxplot(mapping = aes(x = as.factor(thirty_day_mort), 
+                             y = anchor_age)) +
+  theme_classic() +
+  labs(title = "Figure 12.f. Age distribution by thirty-day mortality",
+       x = "30 Days Mortality", y = "Age")
 ```
 
 - `thirty_day_mort` vs first lab measurements
 
+```{r}
+tbl_plot <- mimic_icu_cohort %>%
+  select(subject_id, thirty_day_mort, starts_with("lab")) %>%
+  pivot_longer(starts_with("lab"),
+               names_to = "lab_item",
+               values_to = "value") 
+
+k <- 1
+plot <- list()
+for (i in unique(tbl_plot$`lab_item`)){
+  plot[[k]] <- tbl_plot %>%
+    filter(lab_item == i) %>%
+    ggplot(mapping = aes(x = as.factor(thirty_day_mort), y = value)) +
+    geom_boxplot(outlier.size = 0.3) +
+    theme_classic() +
+    labs(title = i, x = NULL, y = NULL) 
+  k <- k + 1
+}
+
+grid.arrange(grobs = plot, ncol = 5,
+             top = "Figure 13. Boxplot of lab items by 30-day mortality")
+```
+
+```{r}
+tbl_summary <- tbl_plot %>%
+  group_by(thirty_day_mort, lab_item) %>%
+  summarize(
+    median = median(value, na.rm = TRUE),
+    P25 = quantile(value, 0.25, na.rm = TRUE),
+    P75 = quantile(value, 0.75, na.rm = TRUE)
+  ) %>%
+  mutate(
+    stat = str_c(median, " (", P25, " ,", P75, ")"),
+    .keep = "unused"
+  ) %>%
+  pivot_wider(names_from = thirty_day_mort,
+              names_prefix = "30-day mortality: ",
+              values_from = stat)
+
+knitr::kable(tbl_summary, caption = "Table 3. Median, P25/75 of lab terms")
+```
+
+<p style="color:DarkRed;">**Answer:** Figure 13 shows the distribution of different lab terms by 30-day mortality. The plot does not look good due to extreme outliers. Table 3 shows the medians and quartiles of these lab terms by 30-day mortality. </p>
+
 - `thirty_day_mort` vs first vital measurements
+
+```{r}
+tbl_plot <- mimic_icu_cohort %>%
+  select(subject_id, thirty_day_mort, starts_with("vital")) %>%
+  pivot_longer(starts_with("vital"),
+               names_to = "vital_item",
+               values_to = "value") 
+
+k <- 1
+plot <- list()
+for (i in unique(tbl_plot$vital_item)){
+  plot[[k]] <- tbl_plot %>%
+    filter(vital_item == i) %>%
+    ggplot(mapping = aes(x = as.factor(thirty_day_mort), y = value)) +
+    geom_boxplot(outlier.size = 0.3) +
+    theme_classic() +
+    labs(title = i, x = NULL, y = NULL) 
+  k <- k + 1
+}
+
+grid.arrange(grobs = plot, ncol = 3,
+             top = "Figure 14. Boxplot of vital items by 30-day mortality")
+```
+
+```{r}
+tbl_summary <- tbl_plot %>%
+  group_by(thirty_day_mort, vital_item) %>%
+  summarize(
+    median = median(value, na.rm = TRUE),
+    P25 = quantile(value, 0.25, na.rm = TRUE),
+    P75 = quantile(value, 0.75, na.rm = TRUE)
+  ) %>%
+  mutate(
+    stat = str_c(median, " (", P25, " ,", P75, ")"),
+    .keep = "unused"
+  ) %>%
+  pivot_wider(names_from = thirty_day_mort,
+              names_prefix = "30-day mortality: ",
+              values_from = stat)
+
+knitr::kable(tbl_summary, caption = "Table 4. Median, P25/75 of vital terms")
+```
+
+<p style="color:DarkRed;">**Answer:** Figure 14 shows the distribution of different vital measurements by 30-day mortality. The plot does not look good due to extreme outliers. Table 3 shows the medians and quartiles of these vital measurement terms by 30-day mortality. </p>
 
 - `thirty_day_mort` vs first ICU unit
 
+```{r}
+mimic_icu_cohort %>%
+  ggplot() +
+  geom_bar(mapping = aes(x = first_careunit, fill = as.factor(thirty_day_mort)),
+           position = "stack") +
+  coord_flip() +
+  theme_classic() +
+  labs(title = "",
+       x = "First ICU unit",
+       y = "Count",
+       fill = "30 Days Mortality")
+```
