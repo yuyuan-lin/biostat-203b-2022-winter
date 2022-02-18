@@ -1,6 +1,6 @@
 *Yuyuan Lin*
 
-### Overall Grade: 175/180
+### Overall Grade: 174/180
 
 ### Quality of report: 10/10
 
@@ -30,25 +30,17 @@ Need to comment on the difference in the parsed data types.
 
 - Q2 (10/10)
 
-For Q2.3, if student uses `slice_min()`. Let them know this function is extremely slow and take 2 pts off. Make sure they get the correct answer (first ICU of each `subject_id`. 
-
 - Q3 (20/20)
-
-`semi_join` 
 
 - Q4 (10/10)
 
 - Q5 (20/20)
 
-Make sure they get right answer, e.g., (1) need to filter out `chartime` outside that specific ICU stay, (2) also retrieve the first lab items during that specific ICU stay, (3) `pivot_wider`, etc
-
 - Q6 (20/20)
 
-Same as Q5.
+- Q7 (14/20)
 
-- Q7 (15/20)
-
-    Close! Just forgot to subset for age 18 at time of admission. Otherwise, excellet project.
+    Close! Just forgot to subset for age 18 at time of admission. Otherwise, excellent project. Also, your pipes in this particular problem can be more concise. No reason to have multiple intermediate saves in this situation. `-6. 
     
 - Q8 (10/10)
 
