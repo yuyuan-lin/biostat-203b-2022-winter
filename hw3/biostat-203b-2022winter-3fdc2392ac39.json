@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "biostat-203b-2022winter",
+  "private_key_id": "3fdc2392ac397f3ed30ec8f1f8ee2d70f8d25cef",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDw92NzCFs6dOLk\nk1dRjZFE6wluNh7Iy2hoiQu7rShia/YyBuuqsZ+0AF+NoU5eyI043X0tABf85s34\nPtBPFKG1Wnh9pmESRnQRSWCyX+lkaShQVuR77NfrMZPmnwZ02g6tGzp9EAZEkztY\niiXvWjE/pgBCHI48mddvQeu38tp3SH0Sm6Lg69OTvRDmWrkBTa3+XqNZ28BnbvSK\nXw3daAlBbVJj7Wf9TmFTmwW2G4HD6mNThjGOjNzlvgKZsfPl32hFXgIU/6djCg7t\nRhEiNOtfnFaGlKT0R6zm6qjEeAkyFT3WnQJHVNVWd1WHvb1pCGFeA6SZkmjw43MF\ndIocFYEZAgMBAAECggEACV42zLG0GUJS0VvcktA4B/fCxLkAKqKEzz6XuQ7G8Yec\nuU5tUlQoPy9eB6OwKC1wFxg+TfXxWMzQ0GBByTdGP6aSJWFm5/ba+5KQmrKxoEyZ\ny4DLTnmTXeKOK1K+paOWGzsCI7tQIRGfxqYNSkBFhqHRpABX88lv15SWoU7E2UsB\n9+Tz6zuJkoevVqNILXtjDbzYBj0O2oNlS7SYrHI8WQvvKSwRno05jwzstsloF1wT\nLl8QtiqJUUaqnEGRhH29Bra/0PJsu2rWsSpzyxX1m+dayYqvJwkC0bdD62S6Hklh\nCVoghw+SjpRJ61pn633rSMB4bP2zDqpXdcBz2NVEcQKBgQD9g4xcTQJmY/yzDpdZ\nXZj5Leyh2kdTHdJaaAREHgit7QETr29cyOoxYlgfT6XGIAH4lG8DvVONtcOMai3C\nbsu5K5wtNUN/uKpxxa/sdV3ccPBmd1JOkS/qP8Sj/hBkJ1g2paS4zdKMehiTqixw\nYqSc1l4W2hlbeOdNReWICifhCQKBgQDzVFblZiMLPaqm4akXsoUDrN/mb9wOlPTG\nvD6KmBurVJhu+Rgk/V8QgOStYlDSAc+e1gZHM62JVOE3SG3SiNkUZc1iHFxLptmH\nxycfG4OUus362JcusIsVaOH1L3ALuhgdXFV6WY9ih5vvR2YYC/hBgTQF8jNa7I9I\nI6qhCChzkQKBgFrXlKhOgBmoopiXFezT+UjxB+ZHjV9fRE1ZEI5IJNwOHWCscL9S\nz3i6wNEXfVOtjIdCyTUR1qrlAxmBwrv1b9L+qYwZlgJibdEvAYc911Byt/I/t6Kn\nq//IsfIBzGXXI2kRmiEOv+/OoJfpVts+vbXlqvmNVaDNhjTOYx2IZhnhAoGAZzLm\n48XsqPDPdpWQVIeXGFbyYtYgO2L7aWofEEKwwXpQaAhnMBDxh5tS4SIoatjvyEq3\nQO1u9Sa1me+y/C6j+p2ufKTQlBlAevCA7BWMOcD8aR4BCIFBi6P+6TDkUWTso08s\nxYZEZKJlBRd/+kThVk7I1JjDJRXdMthFnqRKG7ECgYEA8wMLOcfXrvP6r7q1vGFy\nYL2BOa5qLzbLt4DxYOaPLEfdUz+iCzs3A0HRCUggtQlP2bCKX6NR+cc7f+co/4yJ\nHPyEIIyDIdLBBllJ65OX3XE1Af7kgo5QG1ENgZAdplbDd32sB8A2CYy7DgwN45Oa\nUJtm1I8HpuAZZi0ZtAgWNqA=\n-----END PRIVATE KEY-----\n",
+  "client_email": "mimiciv-bigquery@biostat-203b-2022winter.iam.gserviceaccount.com",
+  "client_id": "115191924581961870586",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/mimiciv-bigquery%40biostat-203b-2022winter.iam.gserviceaccount.com"
+}
