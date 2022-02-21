@@ -82,7 +82,6 @@ icustays_tble <- icustays_tble %>%
 ```{r}
 admissions_tble <- tbl(con, "admissions") %>%
   semi_join(icustays_tble, by = c("subject_id", "hadm_id")) %>%
-  show_query() %>%
   print(width = Inf)
 ```
 
@@ -90,7 +89,6 @@ admissions_tble <- tbl(con, "admissions") %>%
 ```{r}
 patients_tble <- tbl(con, "patients") %>%
   semi_join(icustays_tble, by = c("subject_id")) %>%
-  show_query() %>%
   print(width = Inf)
 ```
 
@@ -101,7 +99,6 @@ labevents_tble <- tbl(con, "labevents") %>%
   semi_join(icustays_tble, by = c("subject_id")) %>%
   filter(itemid %in% c(50912, 50971, 50983, 50902, 50882, 
                        51221, 51301, 50931, 50960, 50893)) %>%
-  show_query() %>%
   print(width = Inf)
 ```
 Only keep the first lab measurements during ICU stay and pivot lab items to become variables/columns.
@@ -121,7 +118,6 @@ labevents_tble_w <- labevents_tble %>%
   pivot_wider(names_from = itemid, names_prefix = "itemid_",
               values_from = valuenum) %>%
   # show results
-  show_query() %>%
   print(width = Inf)
 ```
 
@@ -131,7 +127,6 @@ chartevents_tble <- tbl(con, "chartevents") %>%
   select(c("subject_id", "itemid", "charttime", "valuenum")) %>%
   semi_join(icustays_tble, by = c("subject_id")) %>%
   filter(itemid %in% c(220045, 220181, 220179, 223761, 220210)) %>%
-  show_query() %>%
   print(width = Inf)
 ```
 Only keep the first chart events during ICU stay and pivot chart events to become variables/columns.
@@ -151,7 +146,6 @@ chartevents_tble_w <- chartevents_tble %>%
   pivot_wider(names_from = itemid, names_prefix = "itemid_",
               values_from = valuenum) %>%
   # show results
-  show_query() %>%
   print(width = Inf)
 ```
 
@@ -183,14 +177,12 @@ icu_cohort <- icustays_tble %>%
                                 as.Date(admittime) + as.integer(30) < dod ~ 0)
   ) %>%
   # print results
-  show_query() %>%
   print(width = Inf)
 ```
 
 ```{r}
 # write tbl_dbi to local rds file
 icu_cohort %>% 
-  show_query() %>%
   collect() %>%
   saveRDS(file = "mimiciv_shiny/icu_cohort.rds")
 ```
@@ -205,3 +197,4 @@ rm(list = ls())
 
 Develop a Shiny app for exploring the ICU cohort data created in Q1. The app should reside in the `mimiciv_shiny` folder. The app should provide easy access to the graphical and numerical summaries of variables (demographics, lab measurements, vitals) in the ICU cohort.
 
+\textcolor{red}{For this part, please refer to the Shiny app in the `mimiciv_shiny` folder.}
