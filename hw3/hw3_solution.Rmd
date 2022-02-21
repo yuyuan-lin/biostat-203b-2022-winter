@@ -173,8 +173,8 @@ icu_cohort <- icustays_tble %>%
   # create 30-day-mortality indicator
   mutate(
     thirty_day_mort = case_when(is.na(dod) ~ 0,
-                                as.Date(admittime) + as.integer(30) > dod ~ 1,
-                                as.Date(admittime) + as.integer(30) < dod ~ 0)
+                                as.Date(admittime) + 30L > dod ~ 1,
+                                as.Date(admittime) + 30L < dod ~ 0)
   ) %>%
   # print results
   print(width = Inf)

@@ -574,8 +574,8 @@ if (!dir.exists(&quot;mimiciv_shiny&quot;)) {
   # create 30-day-mortality indicator
   mutate(
     thirty_day_mort = case_when(is.na(dod) ~ 0,
-                                as.Date(admittime) + as.integer(30) &gt; dod ~ 1,
-                                as.Date(admittime) + as.integer(30) &lt; dod ~ 0)
+                                as.Date(admittime) + 30L &gt; dod ~ 1,
+                                as.Date(admittime) + 30L &lt; dod ~ 0)
   ) %&gt;%
   # print results
   print(width = Inf)</code></pre>
