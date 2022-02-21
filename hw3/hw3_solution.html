@@ -177,26 +177,30 @@ pre code {
 
 <p>Display machine information:</p>
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>## R version 4.1.2 (2021-11-01)
-## Platform: x86_64-apple-darwin17.0 (64-bit)
-## Running under: macOS Big Sur 10.16
+<pre><code>## R version 3.6.0 (2019-04-26)
+## Platform: x86_64-redhat-linux-gnu (64-bit)
+## Running under: CentOS Linux 7 (Core)
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.0.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
+## BLAS/LAPACK: /usr/lib64/R/lib/libRblas.so
 ## 
 ## locale:
-## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 ## 
 ## attached base packages:
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] digest_0.6.29   R6_2.5.1        jsonlite_1.7.3  magrittr_2.0.2 
-##  [5] evaluate_0.14   stringi_1.7.6   rlang_1.0.0     cli_3.1.1      
+##  [1] digest_0.6.29   R6_2.5.1        jsonlite_1.7.2  magrittr_2.0.1 
+##  [5] evaluate_0.14   stringi_1.7.6   rlang_1.0.1     cli_3.1.0      
 ##  [9] rstudioapi_0.13 jquerylib_0.1.4 bslib_0.3.1     rmarkdown_2.11 
-## [13] tools_4.1.2     stringr_1.4.0   xfun_0.29       yaml_2.2.2     
-## [17] fastmap_1.1.0   compiler_4.1.2  htmltools_0.5.2 knitr_1.37     
+## [13] tools_3.6.0     stringr_1.4.0   xfun_0.29       yaml_2.2.1     
+## [17] fastmap_1.1.0   compiler_3.6.0  htmltools_0.5.2 knitr_1.37     
 ## [21] sass_0.4.0</code></pre>
 <p>Load database libraries and the tidyverse frontend:</p>
 <pre class="r"><code>suppressPackageStartupMessages(library(dbplyr))
@@ -713,7 +717,9 @@ rm(list = ls())</code></pre>
 <div id="q2.-shiny-app" class="section level2">
 <h2>Q2. Shiny app</h2>
 <p>Develop a Shiny app for exploring the ICU cohort data created in Q1. The app should reside in the <code>mimiciv_shiny</code> folder. The app should provide easy access to the graphical and numerical summaries of variables (demographics, lab measurements, vitals) in the ICU cohort.</p>
-<p></p>
+<p style="color:red;">
+For this part, please refer to the <code>app.r</code> located in the <code>mimiciv_shiny</code> folder.
+</p>
 </div>
 
 

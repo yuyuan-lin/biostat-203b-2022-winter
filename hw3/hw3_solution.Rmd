@@ -197,4 +197,5 @@ rm(list = ls())
 
 Develop a Shiny app for exploring the ICU cohort data created in Q1. The app should reside in the `mimiciv_shiny` folder. The app should provide easy access to the graphical and numerical summaries of variables (demographics, lab measurements, vitals) in the ICU cohort.
 
-\textcolor{red}{For this part, please refer to the Shiny app in the `mimiciv_shiny` folder.}
+
+<p style="color:red;">For this part, please refer to the `app.r` located in the `mimiciv_shiny` folder. </p>
