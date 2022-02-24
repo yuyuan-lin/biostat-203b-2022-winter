@@ -177,30 +177,26 @@ pre code {
 
 <p>Display machine information:</p>
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>## R version 3.6.0 (2019-04-26)
-## Platform: x86_64-redhat-linux-gnu (64-bit)
-## Running under: CentOS Linux 7 (Core)
+<pre><code>## R version 4.1.2 (2021-11-01)
+## Platform: x86_64-apple-darwin17.0 (64-bit)
+## Running under: macOS Big Sur 10.16
 ## 
 ## Matrix products: default
-## BLAS/LAPACK: /usr/lib64/R/lib/libRblas.so
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
-##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
-##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
-##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
-##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
-##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 ## 
 ## attached base packages:
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] digest_0.6.29   R6_2.5.1        jsonlite_1.7.2  magrittr_2.0.1 
-##  [5] evaluate_0.14   stringi_1.7.6   rlang_1.0.1     cli_3.1.0      
+##  [1] digest_0.6.29   R6_2.5.1        jsonlite_1.7.3  magrittr_2.0.2 
+##  [5] evaluate_0.14   stringi_1.7.6   rlang_1.0.0     cli_3.1.1      
 ##  [9] rstudioapi_0.13 jquerylib_0.1.4 bslib_0.3.1     rmarkdown_2.11 
-## [13] tools_3.6.0     stringr_1.4.0   xfun_0.29       yaml_2.2.1     
-## [17] fastmap_1.1.0   compiler_3.6.0  htmltools_0.5.2 knitr_1.37     
+## [13] tools_4.1.2     stringr_1.4.0   xfun_0.29       yaml_2.2.2     
+## [17] fastmap_1.1.0   compiler_4.1.2  htmltools_0.5.2 knitr_1.37     
 ## [21] sass_0.4.0</code></pre>
 <p>Load database libraries and the tidyverse frontend:</p>
 <pre class="r"><code>suppressPackageStartupMessages(library(dbplyr))
@@ -340,52 +336,52 @@ icustays_tble &lt;- tbl(con, &quot;icustays&quot;) %&gt;%
 ## # Database: BigQueryConnection
 ##    subject_id  hadm_id admittime           dischtime          
 ##         &lt;int&gt;    &lt;int&gt; &lt;dttm&gt;              &lt;dttm&gt;             
-##  1   10930322 29807749 2125-12-26 15:36:00 2125-12-30 12:15:00
-##  2   17038950 24783985 2118-12-23 21:21:00 2118-12-28 16:00:00
-##  3   12006501 26648356 2162-08-14 01:55:00 2162-08-22 13:26:00
-##  4   16013238 26884872 2117-07-01 22:19:00 2117-07-04 19:19:00
-##  5   16291864 21667672 2142-12-12 21:52:00 2142-12-31 13:10:00
-##  6   13972879 27280578 2143-12-22 22:44:00 2143-12-24 05:35:00
-##  7   18256282 28106624 2169-07-02 17:53:00 2169-07-07 17:18:00
-##  8   19261620 29209298 2189-03-12 17:19:00 2189-03-19 11:00:00
-##  9   12012181 26862482 2120-09-10 05:10:00 2120-09-16 19:25:00
-## 10   17190362 25197072 2130-10-09 23:00:00 2130-10-14 19:00:00
+##  1   13197526 28853425 2111-03-01 02:22:00 2111-03-03 17:30:00
+##  2   15509304 26869731 2189-08-09 05:07:00 2189-08-11 15:00:00
+##  3   11958726 24320913 2117-12-20 13:42:00 2118-01-28 16:30:00
+##  4   16613161 23377835 2156-02-08 19:57:00 2156-02-18 13:02:00
+##  5   17969957 29045054 2181-06-04 19:38:00 2181-06-12 19:05:00
+##  6   15784035 24096846 2137-04-17 18:41:00 2137-04-24 16:14:00
+##  7   14854458 28121109 2174-09-01 19:17:00 2174-09-03 22:30:00
+##  8   14360149 25834248 2176-11-25 17:13:00 2176-12-17 00:00:00
+##  9   15840371 22995174 2187-05-04 20:43:00 2187-05-12 00:00:00
+## 10   18443449 22133024 2157-05-25 14:00:00 2157-05-30 19:07:00
 ##    deathtime           admission_type admission_location    
 ##    &lt;dttm&gt;              &lt;chr&gt;          &lt;chr&gt;                 
-##  1 NA                  EW EMER.       EMERGENCY ROOM        
-##  2 NA                  EW EMER.       EMERGENCY ROOM        
-##  3 NA                  EW EMER.       EMERGENCY ROOM        
-##  4 2117-07-04 19:19:00 EW EMER.       TRANSFER FROM HOSPITAL
-##  5 NA                  EW EMER.       EMERGENCY ROOM        
-##  6 2143-12-24 05:35:00 EW EMER.       EMERGENCY ROOM        
-##  7 NA                  EW EMER.       EMERGENCY ROOM        
-##  8 NA                  EW EMER.       EMERGENCY ROOM        
-##  9 NA                  EW EMER.       TRANSFER FROM HOSPITAL
-## 10 NA                  EW EMER.       EMERGENCY ROOM        
-##    discharge_location       insurance language marital_status
-##    &lt;chr&gt;                    &lt;chr&gt;     &lt;chr&gt;    &lt;chr&gt;         
-##  1 HOME HEALTH CARE         Medicare  ENGLISH  WIDOWED       
-##  2 SKILLED NURSING FACILITY Medicare  ?        WIDOWED       
-##  3 REHAB                    Medicare  ENGLISH  WIDOWED       
-##  4 DIED                     Medicare  ENGLISH  WIDOWED       
-##  5 SKILLED NURSING FACILITY Medicare  ENGLISH  WIDOWED       
-##  6 DIED                     Medicare  ?        WIDOWED       
-##  7 SKILLED NURSING FACILITY Medicare  ENGLISH  WIDOWED       
-##  8 SKILLED NURSING FACILITY Medicare  ENGLISH  WIDOWED       
-##  9 SKILLED NURSING FACILITY Medicare  ENGLISH  WIDOWED       
-## 10 &lt;NA&gt;                     Medicare  ENGLISH  WIDOWED       
+##  1 NA                  URGENT         TRANSFER FROM HOSPITAL
+##  2 NA                  URGENT         TRANSFER FROM HOSPITAL
+##  3 NA                  URGENT         TRANSFER FROM HOSPITAL
+##  4 2156-02-18 13:02:00 URGENT         TRANSFER FROM HOSPITAL
+##  5 NA                  URGENT         TRANSFER FROM HOSPITAL
+##  6 NA                  URGENT         TRANSFER FROM HOSPITAL
+##  7 NA                  URGENT         TRANSFER FROM HOSPITAL
+##  8 2176-12-17 00:00:00 URGENT         TRANSFER FROM HOSPITAL
+##  9 2187-05-12 00:00:00 URGENT         TRANSFER FROM HOSPITAL
+## 10 NA                  URGENT         TRANSFER FROM HOSPITAL
+##    discharge_location           insurance language marital_status
+##    &lt;chr&gt;                        &lt;chr&gt;     &lt;chr&gt;    &lt;chr&gt;         
+##  1 HOME HEALTH CARE             Other     ENGLISH  &lt;NA&gt;          
+##  2 HOME                         Other     ENGLISH  &lt;NA&gt;          
+##  3 CHRONIC/LONG TERM ACUTE CARE Medicare  ENGLISH  &lt;NA&gt;          
+##  4 DIED                         Medicaid  ?        &lt;NA&gt;          
+##  5 HOME HEALTH CARE             Medicare  ?        &lt;NA&gt;          
+##  6 HOME HEALTH CARE             Medicare  ?        &lt;NA&gt;          
+##  7 AGAINST ADVICE               Other     ENGLISH  &lt;NA&gt;          
+##  8 DIED                         Medicare  ENGLISH  &lt;NA&gt;          
+##  9 DIED                         Other     ENGLISH  &lt;NA&gt;          
+## 10 HOME HEALTH CARE             Medicare  ENGLISH  &lt;NA&gt;          
 ##    ethnicity              edregtime           edouttime          
 ##    &lt;chr&gt;                  &lt;dttm&gt;              &lt;dttm&gt;             
-##  1 WHITE                  2125-12-26 13:45:00 2125-12-26 21:50:00
-##  2 WHITE                  2118-12-23 15:45:00 2118-12-24 00:04:00
-##  3 ASIAN                  2162-08-13 23:54:00 2162-08-14 03:34:00
-##  4 WHITE                  2117-07-01 20:02:00 2117-07-01 23:18:00
-##  5 WHITE                  2142-12-12 15:08:00 2142-12-12 23:00:00
-##  6 WHITE                  2143-12-22 17:48:00 2143-12-22 23:18:00
-##  7 BLACK/AFRICAN AMERICAN 2169-07-02 11:21:00 2169-07-02 18:50:00
-##  8 WHITE                  2189-03-12 12:04:00 2189-03-12 18:29:00
-##  9 WHITE                  2120-09-10 04:47:00 2120-09-10 07:46:00
-## 10 WHITE                  2130-10-09 19:27:00 2130-10-10 00:59:00
+##  1 WHITE                  NA                  NA                 
+##  2 UNKNOWN                2189-08-09 03:51:00 2189-08-09 06:38:00
+##  3 UNKNOWN                NA                  NA                 
+##  4 BLACK/AFRICAN AMERICAN NA                  NA                 
+##  5 UNABLE TO OBTAIN       NA                  NA                 
+##  6 UNKNOWN                NA                  NA                 
+##  7 UNKNOWN                NA                  NA                 
+##  8 BLACK/AFRICAN AMERICAN NA                  NA                 
+##  9 UNKNOWN                NA                  NA                 
+## 10 WHITE                  NA                  NA                 
 ##    hospital_expire_flag
 ##                   &lt;int&gt;
 ##  1                    0
@@ -393,10 +389,10 @@ icustays_tble &lt;- tbl(con, &quot;icustays&quot;) %&gt;%
 ##  3                    0
 ##  4                    1
 ##  5                    0
-##  6                    1
+##  6                    0
 ##  7                    0
-##  8                    0
-##  9                    0
+##  8                    1
+##  9                    1
 ## 10                    0
 ## # … with more rows</code></pre>
 <ol start="5" style="list-style-type: decimal">
@@ -433,16 +429,16 @@ icustays_tble &lt;- tbl(con, &quot;icustays&quot;) %&gt;%
 ## # Database: BigQueryConnection
 ##    subject_id itemid charttime           valuenum
 ##         &lt;int&gt;  &lt;int&gt; &lt;dttm&gt;                 &lt;dbl&gt;
-##  1   10005348  50912 2128-09-09 10:50:00      0.8
-##  2   10007677  50882 2120-11-23 13:39:00     23  
-##  3   10007677  50882 2120-12-06 16:00:00     24  
-##  4   10007677  50882 2120-12-14 08:16:00     28  
-##  5   10019003  51221 2153-10-06 12:50:00     33.3
-##  6   10019992  50960 2140-09-17 03:48:00      2.1
-##  7   10020852  50931 2164-10-29 12:30:00     84  
-##  8   10023708  50912 2145-01-25 09:00:00      0.7
-##  9   10031358  50912 2156-09-10 08:15:00      1.1
-## 10   10031358  51221 2157-10-20 07:50:00     32.9
+##  1   10019003  51221 2153-04-05 05:15:00     27.5
+##  2   10019003  50960 2155-10-18 21:45:00      2.3
+##  3   10026161  50983 2133-11-15 10:16:00    134  
+##  4   10031358  50971 2157-02-25 22:40:00      4.2
+##  5   10035168  51221 2146-07-21 10:20:00     37.7
+##  6   10035168  50902 2146-12-25 07:15:00    105  
+##  7   10035631  51301 2112-09-23 00:31:00      0.6
+##  8   10035631  50960 2112-11-06 11:05:00      2  
+##  9   10035631  50882 2112-12-24 00:00:00     28  
+## 10   10035631  50960 2112-12-25 23:00:00      1.4
 ## # … with more rows</code></pre>
 <p>Only keep the first lab measurements during ICU stay and pivot lab items to become variables/columns.</p>
 <pre class="r"><code>labevents_tble_w &lt;- labevents_tble %&gt;% 
@@ -464,30 +460,30 @@ icustays_tble &lt;- tbl(con, &quot;icustays&quot;) %&gt;%
 <pre><code>## Joining, by = &quot;subject_id&quot;</code></pre>
 <pre><code>## # Source:   lazy query [?? x 11]
 ## # Database: BigQueryConnection
-##    subject_id itemid_50912 itemid_50971 itemid_50960 itemid_51301 itemid_50931
+##    subject_id itemid_51301 itemid_51221 itemid_50960 itemid_50971 itemid_50893
 ##         &lt;int&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;
-##  1   14806374          2.5          4.8          2.4         27.4          102
-##  2   14836889          0.5          4.8          2.1          9.2          120
-##  3   18041094          0.6          3.7          1.9         22            134
-##  4   19919980         NA           NA           NA           10             NA
-##  5   11378490          3            3            1.4         17.6          110
-##  6   11825462          3.1          5.8          2           12.5           81
-##  7   12018820          0.4          3.4          1.8         12.4          125
-##  8   13415723          1.3          3.9          2.3          7.5          181
-##  9   16843799          1.1          4.2          2.2          7.2          139
-## 10   18769537          1.1          4.6         NA           21.8           NA
-##    itemid_50893 itemid_50902 itemid_50983 itemid_50882 itemid_51221
+##  1   13185886         13           26.1          2.9          4.4          8.1
+##  2   16813332         12.4         41.2          1.9          4.1          8.6
+##  3   10834214         NA           NA            2.1          4.3          9.1
+##  4   11112100         12.4         36.8          2.1          4.6          7.9
+##  5   11152718          4.2         31.7          2.4          5.7          9.9
+##  6   11391353          6.9         32.8          1.5          3.7          7.9
+##  7   14071274         12.2         29.1          1.8          3.8          8.6
+##  8   14152590         26.4         28.8         NA           NA           NA  
+##  9   14418220         29.5         30.9         NA           NA           NA  
+## 10   18045512         19.8         27.7         NA           NA           NA  
+##    itemid_50931 itemid_50912 itemid_50983 itemid_50882 itemid_50902
 ##           &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;
-##  1          8.1           99          133           14         27.7
-##  2          7.9           99          131           23         32.4
-##  3          7.4          112          140           21         32.3
-##  4         NA             NA           NA           NA         27.6
-##  5          7.2          108          150           27         36  
-##  6          7.4           96          136           26         20.9
-##  7          8.6           96          129           22         32.9
-##  8          9.8          109          142           25         29.6
-##  9          8.9          109          144           22         36.5
-## 10         NA            107          137           23         33.5
+##  1          271          4            130           19           93
+##  2          124          0.8          138           24          105
+##  3          144          0.6          137           25          102
+##  4          118          0.9          138           22          107
+##  5           86         17.7          144           19          101
+##  6          115          0.7          145           23          114
+##  7          209          0.9          136           32           95
+##  8           NA         NA             NA           NA           NA
+##  9           NA         NA             NA           NA           NA
+## 10           NA         NA             NA           NA           NA
 ## # … with more rows</code></pre>
 <ol start="7" style="list-style-type: decimal">
 <li>Connect to <code>chartevents</code> table and retrieve a subset that only contain subjects who appear in <code>icustays_tble</code> and the chart events listed in HW2.</li>
@@ -501,16 +497,16 @@ icustays_tble &lt;- tbl(con, &quot;icustays&quot;) %&gt;%
 ## # Database: BigQueryConnection
 ##    subject_id itemid charttime           valuenum
 ##         &lt;int&gt;  &lt;int&gt; &lt;dttm&gt;                 &lt;dbl&gt;
-##  1   12384428 223761 2175-07-12 08:00:00     98.3
-##  2   12493444 223761 2170-01-04 00:00:00     98.2
-##  3   14584141 223761 2206-03-11 04:00:00     98.5
-##  4   14634306 223761 2163-10-14 08:00:00     97.8
-##  5   17578209 223761 2124-09-09 12:00:00     97.8
-##  6   14222445 223761 2195-04-24 00:00:00     97.9
-##  7   15284302 223761 2188-11-26 04:00:00     97.6
-##  8   18767957 223761 2193-05-11 23:00:00    102. 
-##  9   19275976 223761 2110-07-17 16:00:00    101. 
-## 10   10612535 223761 2193-01-11 08:00:00     98.1
+##  1   14354220 223761 2136-01-16 22:04:00     98.6
+##  2   16537763 223761 2142-06-20 12:00:00     98.9
+##  3   16554888 223761 2209-12-20 00:00:00     99  
+##  4   10229726 223761 2128-07-23 05:55:00     98.1
+##  5   13325192 223761 2187-04-28 08:00:00     98.6
+##  6   13679226 223761 2163-07-31 16:00:00     97.1
+##  7   13907173 223761 2127-06-17 04:00:00     97.4
+##  8   14025287 223761 2187-11-08 01:25:00     98.2
+##  9   14320833 223761 2115-12-18 16:00:00    100. 
+## 10   17777109 223761 2159-06-25 20:00:00     96.7
 ## # … with more rows</code></pre>
 <p>Only keep the first chart events during ICU stay and pivot chart events to become variables/columns.</p>
 <pre class="r"><code>chartevents_tble_w &lt;- chartevents_tble %&gt;% 
@@ -532,30 +528,30 @@ icustays_tble &lt;- tbl(con, &quot;icustays&quot;) %&gt;%
 <pre><code>## Joining, by = &quot;subject_id&quot;</code></pre>
 <pre><code>## # Source:   lazy query [?? x 6]
 ## # Database: BigQueryConnection
-##    subject_id itemid_220179 itemid_220210 itemid_220045 itemid_223761
+##    subject_id itemid_220179 itemid_220181 itemid_220045 itemid_220210
 ##         &lt;int&gt;         &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
-##  1   15323393           114            23            92          97  
-##  2   12658526            NA            23           104          NA  
-##  3   15737704           115            17            92          NA  
-##  4   12044573            NA            15            53          NA  
-##  5   10183302            NA            NA            NA          98.6
-##  6   17732348           166            NA            NA          NA  
-##  7   14323699            NA            NA            60          99.1
-##  8   17787457           121            NA            NA          NA  
-##  9   14838267            NA            16            73          NA  
-## 10   16662186           150            16           106          NA  
-##    itemid_220181
+##  1   13166240            NA            NA            64            19
+##  2   13084079            NA            NA           135            12
+##  3   10991174            NA            NA            71            20
+##  4   13816626            NA            NA            NA            NA
+##  5   18137084           121            84            93            15
+##  6   10948835            NA            NA            74            NA
+##  7   15681270            NA            NA            65            13
+##  8   17135687            NA            NA            83            16
+##  9   15277035            NA            NA            88            NA
+## 10   17559795            NA            NA           102            13
+##    itemid_223761
 ##            &lt;dbl&gt;
-##  1            71
-##  2            NA
-##  3            77
-##  4            NA
-##  5            NA
-##  6           151
-##  7            NA
-##  8            85
-##  9            NA
-## 10           107
+##  1          NA  
+##  2          NA  
+##  3          NA  
+##  4          98.5
+##  5          NA  
+##  6          NA  
+##  7          NA  
+##  8          94.2
+##  9          NA  
+## 10          NA  
 ## # … with more rows</code></pre>
 <ol start="8" style="list-style-type: decimal">
 <li>Put things together. This step is similar to Q7 of HW2. Using one chain of pipes <code>%&gt;%</code> to perform following data wrangling steps: (i) start with the <code>icustays_tble</code> for the first ICU stay of each unique patient, (ii) merge in admissions and patients tables, (iii) keep adults only (age at admission &gt;= 18), (iv) merge in the labevents and chartevents tables, (v) create an indicator for 30-day mortality, (vi) save the final tibble to an <code>icu_cohort.rds</code> R data file in the <code>mimiciv_shiny</code> folder.</li>
@@ -570,7 +566,8 @@ if (!dir.exists(&quot;mimiciv_shiny&quot;)) {
   # join patients table
   left_join(patients_tble, by = c(&quot;subject_id&quot;)) %&gt;%
   # keep adults only
-  filter(anchor_age &gt;= 18) %&gt;%
+  mutate(admit_age = year(admittime) - anchor_year + anchor_age) %&gt;%
+  filter(admit_age &gt;= 18) %&gt;%
   # join lab event table (wide)
   left_join(labevents_tble_w, by = c(&quot;subject_id&quot;)) %&gt;%
   # join chart event table (wide)
@@ -583,7 +580,7 @@ if (!dir.exists(&quot;mimiciv_shiny&quot;)) {
   ) %&gt;%
   # print results
   print(width = Inf)</code></pre>
-<pre><code>## # Source:   lazy query [?? x 42]
+<pre><code>## # Source:   lazy query [?? x 43]
 ## # Database: BigQueryConnection
 ##    subject_id intime               hadm_id  stay_id first_careunit
 ##         &lt;int&gt; &lt;dttm&gt;                 &lt;int&gt;    &lt;int&gt; &lt;chr&gt;         
@@ -657,42 +654,42 @@ if (!dir.exists(&quot;mimiciv_shiny&quot;)) {
 ##  8                    0 F              48        2131 2011 - 2013      
 ##  9                    0 F              24        2175 2014 - 2016      
 ## 10                    0 F              49        2140 2017 - 2019      
-##    dod        itemid_50912 itemid_50971 itemid_50960 itemid_51301 itemid_50931
-##    &lt;date&gt;            &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;
-##  1 NA                 NA           NA           NA           NA             NA
-##  2 NA                  0.5          4            1.8          3.5           99
-##  3 NA                  1            4.4          1.9         10.6           78
-##  4 NA                  0.5          4.6          1.7         12.1          106
-##  5 NA                  8.2          5            1.4          5.4          127
-##  6 2115-12-11          0.4          4.3          1.6          9.2          135
-##  7 NA                 NA            4.1         NA           NA             NA
-##  8 NA                  0.8          4            1.9         14.7          157
-##  9 NA                  0.8          4.3          2            7.1           85
-## 10 NA                  0.7          3.8          1.8         20.1           98
-##    itemid_50893 itemid_50902 itemid_50983 itemid_50882 itemid_51221
-##           &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;
-##  1         NA             NA          130           NA         NA  
-##  2          8.1          108          141           21         30.5
-##  3          8.9          104          139           16         41.6
-##  4          9.2           98          134           23         36  
-##  5          8.4          105          143           19         30  
-##  6          9.2           98          138           26         31.5
-##  7         NA             NA           NA           NA         NA  
-##  8          8.3          106          145           22         37.1
-##  9          9.2          105          139           24         34.7
-## 10          9.6          101          137           20         39.6
-##    itemid_220179 itemid_220210 itemid_220045 itemid_223761 itemid_220181
+##    dod        admit_age itemid_51301 itemid_51221 itemid_50960 itemid_50971
+##    &lt;date&gt;         &lt;int&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;
+##  1 NA                80         NA           NA           NA           NA  
+##  2 NA                49          3.5         30.5          1.8          4  
+##  3 NA                72         10.6         41.6          1.9          4.4
+##  4 NA                69         12.1         36            1.7          4.6
+##  5 NA                63          5.4         30            1.4          5  
+##  6 2115-12-11        57          9.2         31.5          1.6          4.3
+##  7 NA                46         NA           NA           NA            4.1
+##  8 NA                52         14.7         37.1          1.9          4  
+##  9 NA                24          7.1         34.7          2            4.3
+## 10 NA                49         20.1         39.6          1.8          3.8
+##    itemid_50893 itemid_50931 itemid_50912 itemid_50983 itemid_50882 itemid_50902
+##           &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;
+##  1         NA             NA         NA            130           NA           NA
+##  2          8.1           99          0.5          141           21          108
+##  3          8.9           78          1            139           16          104
+##  4          9.2          106          0.5          134           23           98
+##  5          8.4          127          8.2          143           19          105
+##  6          9.2          135          0.4          138           26           98
+##  7         NA             NA         NA             NA           NA           NA
+##  8          8.3          157          0.8          145           22          106
+##  9          9.2           85          0.8          139           24          105
+## 10          9.6           98          0.7          137           20          101
+##    itemid_220179 itemid_220181 itemid_220045 itemid_220210 itemid_223761
 ##            &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
-##  1            98            NA            78         102.             NA
-##  2            NA             5            91          NA              NA
-##  3            NA            NA            NA          98.7            NA
-##  4            NA            12            74          NA              NA
-##  5           165            26            95          NA              95
-##  6            NA            23            96          98.6            NA
-##  7            NA            18            89          NA              NA
-##  8            NA            23            NA          98.4            NA
-##  9            NA            17            67          NA              NA
-## 10            NA            NA            NA          99.5            NA
+##  1            98            NA            78            NA         102. 
+##  2            NA            NA            91             5          NA  
+##  3            NA            NA            NA            NA          98.7
+##  4            NA            NA            74            12          NA  
+##  5           165            95            95            26          NA  
+##  6            NA            NA            96            23          98.6
+##  7            NA            NA            89            18          NA  
+##  8            NA            NA            NA            23          98.4
+##  9            NA            NA            67            17          NA  
+## 10            NA            NA            NA            NA          99.5
 ##    thirty_day_mort
 ##              &lt;dbl&gt;
 ##  1               0

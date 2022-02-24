@@ -165,7 +165,8 @@ icu_cohort <- icustays_tble %>%
   # join patients table
   left_join(patients_tble, by = c("subject_id")) %>%
   # keep adults only
-  filter(anchor_age >= 18) %>%
+  mutate(admit_age = year(admittime) - anchor_year + anchor_age) %>%
+  filter(admit_age >= 18) %>%
   # join lab event table (wide)
   left_join(labevents_tble_w, by = c("subject_id")) %>%
   # join chart event table (wide)

@@ -41,8 +41,5 @@ vignettes/*.pdf
 # Pride and Prejudice
 hw1/pg42671.txt
 
-# RDS data
-*.rds
-
 # macOS store file
 .DS_Store
