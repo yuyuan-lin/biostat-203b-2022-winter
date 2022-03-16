@@ -1,0 +1,183 @@
+---
+title: "Biostat 203B Homework 4"
+subtitle: Due Mar 18 @ 11:59PM
+output:
+  # ioslides_presentation: default
+  html_document:
+    toc: true
+    toc_depth: 4
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE,
+                      message = FALSE, warning = FALSE)
+```
+
+Display machine information:
+```{r}
+sessionInfo()
+```
+Load database libraries and the tidyverse frontend:
+```{r}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(lubridate))
+suppressPackageStartupMessages(library(miceRanger))
+```
+
+## Q1. Missing data
+
+Through the Shiny app developed in HW3, we observe abundant missing values in the MIMIC-IV ICU cohort we created. In this question, we use multiple imputation to obtain a data set without missing values.
+
+0. Read following tutorials on the R package miceRanger for imputation: <https://github.com/farrellday/miceRanger>, <https://cran.r-project.org/web/packages/miceRanger/vignettes/miceAlgorithm.html>.
+
+    A more thorough book treatment of the practical imputation strategies is the book [*_Flexible Imputation of Missing Data_*](https://stefvanbuuren.name/fimd/) by Stef van Buuren. 
+
+1. Explain the jargon MCAR, MAR, and MNAR.
+
+
+
+
+2. Explain in a couple of sentences how the Multiple Imputation by Chained Equations (MICE) work.
+
+
+
+3. Perform a data quality check of the ICU stays data. Discard variables with substantial missingness, say >5000 `NA`s. Replace apparent data entry errors by `NA`s.
+
+```{r}
+# NOTE: make a copy of icu cohort data to  the hw4 folder
+icu_cohort <- readRDS("icu_cohort.rds")
+
+# count missing values by column
+apply(icu_cohort, 2, function(x){sum(is.na(x))})
+
+# remove columns with >5000 NAs and rename the lab/chart items
+icu_cohort <- icu_cohort %>%
+  select(where(function(x){sum(is.na(x))} <= 5000)) 
+
+icu_cohort <- icu_cohort %>%
+  rename(
+    creatinine = itemid_50912,    potassium = itemid_50971,
+    sodium = itemid_50983,        chloride = itemid_50902,
+    bicarbonate = itemid_50882,   hematocrit = itemid_51221,
+    WBC_count = itemid_51301,     glucose = itemid_50931,
+    magnesium = itemid_50960,     calcium = itemid_50893,
+    heart_rate = itemid_220045,   non_invasive_BP = itemid_220181,
+    SBP = itemid_220179,          temp_F = itemid_223761,
+    respiratory_rate = itemid_220210
+  )
+
+# remove extreme outliers
+# the following function remove outliers (defined by preset range) for a vector
+rmOutlier <- function(x, lower, upper) {
+  id_out <- which(x > upper | x < lower)
+  x[id_out] <- NA
+  return(x)
+}
+
+# NOTE: notice that most apparent data entry errors are in vital items
+icu_cohort <- icu_cohort %>%
+  mutate(
+    temp_F = rmOutlier(temp_F, lower = 80, upper = 120),
+    SBP = rmOutlier(SBP, lower = 0, upper = 300),
+    non_invasive_BP = rmOutlier(non_invasive_BP, lower = 0, upper = 300),
+    heart_rate = rmOutlier(heart_rate, lower = 0, upper = 600)
+  )
+```
+
+4. Impute missing values by `miceRanger` (request $m=3$ data sets). This step is computational intensive. Make sure to save the imputation results as a file. Hint: Setting `max.depth=10` in the `miceRanger` function may cut some computing time.
+
+```{r}
+set.seed(203)
+mice_obj <- miceRanger(icu_cohort, m = 3, max.depth = 10, verbose = FALSE)
+```
+
+5. Make imputation diagnostic plots and explain what they mean.
+
+
+
+6. Choose one of the imputed data sets to be used in Q2. This is **not** a good idea to use just one imputed data set or to average multiple imputed data sets. Explain in a couple of sentences what the correct Multiple Imputation strategy is.
+
+```{r}
+icu_cohort_i <- completeData(mice_obj)$Dataset_1
+```
+
+
+
+## Q2. Predicting 30-day mortality
+
+Develop at least two analytic approaches for predicting the 30-day mortality of patients admitted to ICU using demographic information (gender, age, marital status, ethnicity), first lab measurements during ICU stay, and first vital measurements during ICU stay. For example, you can use (1) logistic regression (`glm()` function in base R or keras), (2) logistic regression with lasso penalty (glmnet or keras package), (3) random forest (randomForest package), or (4) neural network (keras package).
+
+1. Partition data into 80% training set and 20% test set. Stratify partitioning according the 30-day mortality status.
+
+```{r}
+# select variables used in predictive model
+data <- icu_cohort_i %>%
+  select(gender, anchor_age, marital_status, ethnicity, insurance, language,
+         magnesium, hematocrit, potassium, sodium, WBC_count, bicarbonate,
+         calcium, chloride, creatinine, glucose, temp_F, SBP, non_invasive_BP,
+         respiratory_rate, heart_rate, thirty_day_mort) 
+
+Y <- data$thirty_day_mort
+# random sample 20% for patients with Y = 1
+id_test_1 <- sample(which(Y == 1), size = length(which(Y == 1)) %/% 5)
+# random sample 20% for patients with Y = 0
+id_test_0 <- sample(which(Y == 0), size = length(which(Y == 0)) %/% 5)
+
+# split the data set
+id_test <- c(id_test_0, id_test_1)
+rm(id_test_1, id_test_0)
+data_test <- data[id_test, ]
+data_train <- data[!id_test, ]
+```
+
+2. Train the models using the training set.
+
+First, fit a basic logistic model
+```{r}
+m_glm <- glm(thirty_day_mort ~ ., 
+             data = data_train, 
+             family = binomial(link = "logit"))
+```
+
+Second, fit a neural network model
+```{r}
+library(keras)
+
+# create X and Y for NN
+x_train <- model.matrix(thirty_day_mort ~., data = data_train)[, -1]
+x_test <- model.matrix(thirty_day_mort ~., data = data_test)[, -1]
+y_train <- data_train$thirty_day_mort %>% to_categorical(2)
+y_test <- data_test$thirty_day_mort %>% to_categorical(2)
+```
+
+```{r}
+m_nn <- keras_model_sequential()
+m_nn %>%
+  layer_dense(units = 32, activation = "relu", 
+              input_shape = c(30)) %>%
+  layer_dense(units = 32, activation = "relu") %>%
+  layer_dense(unit = 2, activation = "softmax")
+
+m_nn %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+m_nn %>% fit(
+  x_train, y_train,
+  epochs = 20, batch_size = 128,
+  validation_split = 0.2
+)
+```
+
+3. Compare model prediction performance on the test set.
+
+```{r}
+m_nn %>% evaluate(x_test, y_test)
+```
+
+```{r}
+predict_glm <- predict(m_glm, newdata = data_test, type = "response")
+mean((predict_glm > 0.5) + 0 == data_test$thirty_day_mort)
+```
