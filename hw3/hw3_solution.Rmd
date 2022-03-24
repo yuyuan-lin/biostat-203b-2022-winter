@@ -109,10 +109,10 @@ labevents_tble_w <- labevents_tble %>%
   filter(charttime > intime & charttime < outtime) %>%
   select(colnames(labevents_tble)) %>%
   # pick the first item for each patients
-  select(subject_id, charttime) %>% 
-  group_by(subject_id) %>% 
+  select(subject_id, charttime, itemid) %>% 
+  group_by(subject_id, itemid) %>% 
   summarise_all(min) %>%
-  left_join(labevents_tble, by = c("subject_id", "charttime")) %>%
+  left_join(labevents_tble, by = c("subject_id", "charttime", "itemid")) %>%
   # pivot to wider
   select(-c("charttime")) %>%
   pivot_wider(names_from = itemid, names_prefix = "itemid_",
@@ -137,10 +137,10 @@ chartevents_tble_w <- chartevents_tble %>%
   filter(charttime > intime & charttime < outtime) %>%
   select(colnames(chartevents_tble)) %>%
   # pick the first item for each patients
-  select(subject_id, charttime) %>% 
-  group_by(subject_id) %>% 
+  select(subject_id, charttime, itemid) %>% 
+  group_by(subject_id, itemid) %>% 
   summarise_all(min) %>%
-  left_join(chartevents_tble, by = c("subject_id", "charttime")) %>%
+  left_join(chartevents_tble, by = c("subject_id", "charttime", "itemid")) %>%
   # pivot to wider
   select(-c("charttime")) %>%
   pivot_wider(names_from = itemid, names_prefix = "itemid_",

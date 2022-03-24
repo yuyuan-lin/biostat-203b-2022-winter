@@ -1,0 +1,231 @@
+---
+title: "Biostat 203B Homework 4"
+subtitle: Due Mar 18 @ 11:59PM
+output:
+  # ioslides_presentation: default
+  html_document:
+    toc: true
+    toc_depth: 4
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE,
+                      message = FALSE, warning = FALSE)
+```
+
+Display machine information:
+```{r}
+sessionInfo()
+```
+Load database libraries and the tidyverse frontend:
+```{r}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(lubridate))
+suppressPackageStartupMessages(library(miceRanger))
+```
+
+## Q1. Missing data
+
+Through the Shiny app developed in HW3, we observe abundant missing values in the MIMIC-IV ICU cohort we created. In this question, we use multiple imputation to obtain a data set without missing values.
+
+0. Read following tutorials on the R package miceRanger for imputation: <https://github.com/farrellday/miceRanger>, <https://cran.r-project.org/web/packages/miceRanger/vignettes/miceAlgorithm.html>.
+
+    A more thorough book treatment of the practical imputation strategies is the book [*_Flexible Imputation of Missing Data_*](https://stefvanbuuren.name/fimd/) by Stef van Buuren. 
+
+1. Explain the jargon MCAR, MAR, and MNAR.
+
+**MCAR: Missing completely at random, which assumes that missingness is unrelated of any unobserved data (response and covariates), meaning that the probability of a missing data value is independent of any observation in the data set.**  
+
+**MAR: Missing at random, which means that missingness is systematically related to the observed but not the unobserved data.**  
+
+**MNAR: Missing not at random, which means that missingness is systematically related to the unobserved data, that is, the missingness is related to events or factors which are not measured by the researcher.**
+
+
+2. Explain in a couple of sentences how the Multiple Imputation by Chained Equations (MICE) work.
+
+**Multiple imputation creates several complete versions of the data by replacing the missing values by plausible data values. These plausible values are drawn from a distribution specifically modeled for each missing entry. For MICE method, the procedure imputes missing data in a dataset through an iterative series of predictive models. In each iteration, each specified variable in the dataset is imputed using the other variables in the dataset. These iterations should be run until it appears that convergence has been met.**
+
+3. Perform a data quality check of the ICU stays data. Discard variables with substantial missingness, say >5000 `NA`s. Replace apparent data entry errors by `NA`s.
+
+```{r}
+# NOTE: make a copy of icu cohort data to  the hw4 folder
+icu_cohort <- readRDS("icu_cohort.rds")
+
+# count missing values by column
+apply(icu_cohort, 2, function(x){sum(is.na(x))})
+
+# remove columns with >5000 NAs and rename the lab/chart items
+icu_cohort <- icu_cohort %>%
+  select(where(function(x){sum(is.na(x))} <= 5000)) 
+
+icu_cohort <- icu_cohort %>%
+  rename(
+    creatinine = itemid_50912,    potassium = itemid_50971,
+    sodium = itemid_50983,        chloride = itemid_50902,
+    bicarbonate = itemid_50882,   hematocrit = itemid_51221,
+    WBC_count = itemid_51301,     glucose = itemid_50931,
+    magnesium = itemid_50960,     calcium = itemid_50893,
+    heart_rate = itemid_220045,   non_invasive_BP = itemid_220181,
+    SBP = itemid_220179,          temp_F = itemid_223761,
+    respiratory_rate = itemid_220210
+  )
+
+# remove extreme outliers
+# the following function removes outliers (defined by preset range) for a vector
+rmOutlier <- function(x, lower, upper) {
+  id_out <- which(x > upper | x < lower)
+  x[id_out] <- NA
+  return(x)
+}
+
+# NOTE: notice that most apparent data entry errors are in vital items
+icu_cohort <- icu_cohort %>%
+  mutate(
+    temp_F = rmOutlier(temp_F, lower = 80, upper = 120),
+    SBP = rmOutlier(SBP, lower = 0, upper = 300),
+    non_invasive_BP = rmOutlier(non_invasive_BP, lower = 0, upper = 300),
+    heart_rate = rmOutlier(heart_rate, lower = 0, upper = 600)
+  )
+```
+
+4. Impute missing values by `miceRanger` (request $m=3$ data sets). This step is computational intensive. Make sure to save the imputation results as a file. Hint: Setting `max.depth=10` in the `miceRanger` function may cut some computing time.
+
+```{r}
+set.seed(203)
+mice_obj <- miceRanger(icu_cohort, m = 3, max.depth = 10, verbose = FALSE)
+```
+
+5. Make imputation diagnostic plots and explain what they mean.
+
+```{r}
+plotDistributions(mice_obj, vars='allNumeric')
+```
+
+**This plot compares the imputed distributions to the original distribution for each variables. If they match up with each other pretty well, it's a hint that the missing pattern is MCAR.**
+
+```{r}
+plotCorrelations(mice_obj, vars = "allNumeric")
+```
+
+**This plot shows the correlations between imputed values in every combination of datasets at each iteration.**
+
+```{r}
+plotVarConvergence(mice_obj, vars = "allNumeric")
+```
+
+**This plot shows whether the imputed data converged to the theoretical mean given the information in the dataset.**
+
+```{r}
+plotModelError(mice_obj, vars = "allNumeric")
+```
+
+**This plot shows whether the imputation has a reasonable degree of accuracy. It looks that we may have some issue with some of these variables which has a lower OOB accuracy of classification. This could be a result of the limitation we put on the max depth of the RF model.**
+
+6. Choose one of the imputed data sets to be used in Q2. This is **not** a good idea to use just one imputed data set or to average multiple imputed data sets. Explain in a couple of sentences what the correct Multiple Imputation strategy is.
+
+```{r}
+icu_cohort_i <- completeData(mice_obj)$Dataset_1
+```
+
+**The best strategy is to make use of every imputed data sets: we can fit our model on all data sets, and then take the pooled results of the parameters from different models (e.g., using meta analysis) as our final results.**
+
+## Q2. Predicting 30-day mortality
+
+Develop at least two analytic approaches for predicting the 30-day mortality of patients admitted to ICU using demographic information (gender, age, marital status, ethnicity), first lab measurements during ICU stay, and first vital measurements during ICU stay. For example, you can use (1) logistic regression (`glm()` function in base R or keras), (2) logistic regression with lasso penalty (glmnet or keras package), (3) random forest (randomForest package), or (4) neural network (keras package).
+
+1. Partition data into 80% training set and 20% test set. Stratify partitioning according the 30-day mortality status.
+
+```{r}
+# select variables used in predictive model
+data <- icu_cohort_i %>%
+  select(gender, anchor_age, marital_status, ethnicity, insurance, language,
+         magnesium, hematocrit, potassium, sodium, WBC_count, bicarbonate,
+         calcium, chloride, creatinine, glucose, temp_F, SBP, non_invasive_BP,
+         respiratory_rate, heart_rate, thirty_day_mort) 
+
+Y <- data$thirty_day_mort
+# random sample 20% for patients with Y = 1
+id_test_1 <- sample(which(Y == 1), size = length(which(Y == 1)) %/% 5)
+# random sample 20% for patients with Y = 0
+id_test_0 <- sample(which(Y == 0), size = length(which(Y == 0)) %/% 5)
+
+# split the data set
+id_test <- c(id_test_0, id_test_1)
+rm(id_test_1, id_test_0)
+data_test <- data[id_test, ]
+data_train <- data[!id_test, ]
+```
+
+2. Train the models using the training set.
+
+**First, fit a basic logistic model**
+```{r}
+m_glm <- glm(thirty_day_mort ~ ., 
+             data = data_train, 
+             family = binomial(link = "logit"))
+```
+
+**Second, fit a neural network model**
+```{r}
+library(keras)
+
+# create X and Y for NN
+x_train <- model.matrix(thirty_day_mort ~., data = data_train)[, -1]
+x_test <- model.matrix(thirty_day_mort ~., data = data_test)[, -1]
+y_train <- data_train$thirty_day_mort %>% to_categorical(2)
+y_test <- data_test$thirty_day_mort %>% to_categorical(2)
+```
+
+```{r}
+m_nn <- keras_model_sequential()
+m_nn %>%
+  layer_dense(units = 32, activation = "relu", 
+              input_shape = c(30)) %>%
+  layer_dense(units = 32, activation = "relu") %>%
+  layer_dense(unit = 2, activation = "softmax")
+
+m_nn %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+m_nn %>% fit(
+  x_train, y_train,
+  epochs = 20, batch_size = 128,
+  validation_split = 0.2
+)
+```
+
+3. Compare model prediction performance on the test set.
+
+**First, let's check the accuracy of two models on the test data set:**
+
+```{r}
+# accuracy of neural network
+m_nn %>% evaluate(x_test, y_test)
+```
+
+```{r}
+# accuracy of logistic regression
+predict_glm <- predict(m_glm, newdata = data_test, type = "response")
+mean((predict_glm > 0.5) + 0 == data_test$thirty_day_mort)
+```
+
+**We can use ROC plots to visualize the performance of two models**
+
+```{r}
+library(pROC)
+
+predict_nn <- m_nn %>% predict(x_test) 
+predict_nn <- predict_nn[, 2]
+roc_nn <- roc(data_test$thirty_day_mort ~ predict_nn)
+roc_glm <- roc(data_test$thirty_day_mort ~ predict_glm)
+# roc for NN
+plot(roc_nn, main = "ROC for Neural Network", print.auc = TRUE)
+
+# roc for Logistic
+plot(roc_glm, main = "ROC for Logistic Regression", print.auc = TRUE)
+```
+
+**As a summary: both two models have similar performance in perdicting 30-day-mortality, with a accuracy of around 0.9 and AUC of ROC around 0.78.**
